@@ -7,7 +7,7 @@ import time
 
 class Stats(object):
     """
-    handling the stats of an instapy session
+    handling the stats of an instappium session
     """
 
     def __init__(self):
@@ -32,7 +32,7 @@ class Stats(object):
 
     def live_report(self):
         """
-           adapted version of instapy live report function for showing up on a telegram message
+           adapted version of instappium live report function for showing up on a telegram message
            :return:
            """
         stats = [
