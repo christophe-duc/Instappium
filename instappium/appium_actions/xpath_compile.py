@@ -1,3 +1,0 @@
-"""
-specific xpaths for Appium
-"""

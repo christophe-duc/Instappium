@@ -16,13 +16,10 @@ class AppiumActions(AppiumCommonActions):
     user = None
     post = None
     comment = None
+    common = None
 
     def __init__(self):
         self.user = AppiumUserActions()
         self.post = AppiumPostActions()
         self.comment = AppiumCommentActions()
-
-    @classmethod
-    def construct_actions(cls):
-        if cls.user is None or cls.post is None or cls.comment is None:
-            _ = AppiumActions()
+        self.common = AppiumCommonActions()

@@ -1,11 +1,4 @@
-from instapy import InstaPy2
-from instapy.engine import LegacyEngine
+from instappium import InstAppium
 
-session = InstaPy2(driver_type="appium-driver")
+session = InstAppium()
 
-LegacyEngine.follow_likers(session,
-                           ["watermelodie"],
-                           photos_grab_amount=2,
-                           follow_likers_per_photo=10,
-                           randomize=False,
-                           interact=False)

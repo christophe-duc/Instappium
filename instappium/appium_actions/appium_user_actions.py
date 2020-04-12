@@ -78,7 +78,7 @@ class AppiumUserActions:
         :return: posts
         """
 
-        users=[]
+        users = []
         todo = post_grab_amount
         if AppiumCommonActions.go_user(username):
             AppiumCommonActions.swipe(1200)
