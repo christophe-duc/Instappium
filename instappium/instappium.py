@@ -6,7 +6,6 @@ from .common import Logger
 
 from time import sleep
 
-
 class InstAppium (Logger):
     """
     Class to be instantiated to use the script
@@ -57,7 +56,6 @@ class InstAppium (Logger):
             if self._webdriver.current_activity().split('.')[-1] == 'MainActivity':
                 self.highlight_print(message="Login successful", message_type="login", level="info")
 
-    def main(self):
-        print(self._webdriver.DISPLAYSIZE)
+
 
 

@@ -11,8 +11,9 @@ class User():
                  follower_count: int = None,
                  following_count: int = None,
                  full_name: str = None,
-                 bio: str = None ):
-
+                 bio: str = None,
+                 category: str = None
+                 ):
         """
         init
         """
@@ -22,6 +23,7 @@ class User():
         self._following_count = following_count
         self._full_name = full_name
         self._bio = bio
+        self._category = category
 
 
     # Used for working with sets
@@ -36,8 +38,10 @@ class User():
             return False
 
     def __repr__(self):
-        return "User information: \n\thash (id): {}, \n\tusername: {}, \n\tpost count: {}, \n\tfollower count: {}, \n\tfollowing count: {}, \n\tfull name: {},\n\tbio: {}".format(
-            hash(self), self.username, self.post_count, self.follower_count, self.following_count, self.full_name, self.bio
+        return "User information: \n\thash (id): {}, \n\tusername: {}, \n\tpost count: {}, \n\tfollower count: {},\
+            \n\tfollowing count: {}, \n\tfull name: {},\n\tbio: {}\n\tcategory: {}".format(
+            hash(self), self.username, self.post_count, self.follower_count,
+            self.following_count, self.full_name, self.bio, self.category
         )
 
     def __str__(self):
@@ -51,6 +55,15 @@ class User():
         """
         return self._post_count
 
+    @post_count.setter
+    def post_count(self, amount):
+        """
+        Setter for post_count
+        :param amount:
+        :return:
+        """
+        self._post_count = amount
+
     @property
     def follower_count(self):
         """
@@ -59,12 +72,20 @@ class User():
         """
         return self._follower_count
 
+    @follower_count.setter
+    def follower_count(self, amount):
+        self._follower_count = amount
+
     @property
     def following_count(self):
         """
         Getter for following_count (self.following_count will call this function automatically)
         :return:
         """
+        return self._following_count
+
+    @follower_count.setter
+    def following_count(self, amount):
         return self._following_count
 
     @property
@@ -75,6 +96,10 @@ class User():
         """
         return self._bio
 
+    @bio.setter
+    def bio(self, text):
+        self._bio = text
+
     @property
     def full_name(self):
         """
@@ -83,3 +108,14 @@ class User():
         """
         return self._full_name
 
+    @full_name.setter
+    def full_name(self, text):
+        self._full_name = text
+
+    @property
+    def category(self):
+        return self._category
+
+    @category.setter
+    def category(self, text):
+        self._category = text

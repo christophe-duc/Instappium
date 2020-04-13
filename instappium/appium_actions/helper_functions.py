@@ -13,3 +13,5 @@ def _cleanup_count(count: str = None):
         elif "M" in count:
             count = count.replace("M", "")
             return int(float(count) * 1000000)
+
+    return int(float(count))

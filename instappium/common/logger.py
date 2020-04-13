@@ -144,7 +144,7 @@ class Logger(object):
 
     @staticmethod
     def get_log_time():
-        """ this method will keep same format for all recored"""
+        """ this method will keep same format for all record"""
         log_time = datetime.now().strftime("%Y-%m-%d %H:%M")
 
         return log_time

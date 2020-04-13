@@ -22,9 +22,7 @@ class AppiumWebDriver(AppiumCommonActions,
     """
     Appium WebDriver class
     """
-    _adb_client = None
-    _web_driver_instance = None
-    DISPLAYSIZE = None
+
 
     def __init__(
         self,
@@ -34,6 +32,25 @@ class AppiumWebDriver(AppiumCommonActions,
         client_port: int = 5037,
         logger: Logger = None
     ):
+        """
+
+        :param devicename:
+        :param devicetimeout:
+        :param client_host:
+        :param client_port:
+        :param logger:
+
+        class vars:
+            - None
+
+        instance vars:
+          - _adb_client
+          - _web_driver_instance
+          - DISPLAYSIZE
+        """
+        _adb_client = None
+        _web_driver_instance = None
+        DISPLAYSIZE = None
 
         self._adb_client = AdbClient(host=client_host, port=client_port)
 
@@ -84,7 +101,8 @@ class AppiumWebDriver(AppiumCommonActions,
 
         return devices
 
-    def get_driver(self):
+    @property
+    def driver(self):
         """
         wrapper for find_element by_xpath
         :param xpath:
@@ -116,15 +134,6 @@ class AppiumWebDriver(AppiumCommonActions,
         :return:
         """
         return self._web_driver_instance.find_element_by_android_uiautomator(uiautomator)
-
-    @staticmethod
-    def click(webelem):
-        """
-        wrapper for element clicking
-        :param webelem:
-        :return:
-        """
-        webelem.click()
 
     def current_activity(self):
         return self._web_driver_instance.current_activity
