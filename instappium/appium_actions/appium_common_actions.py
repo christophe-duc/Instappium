@@ -2,8 +2,6 @@
 Class to define the specific actions for the Common class to work with Appium
 """
 # class import
-from instappium.appium_webdriver import AppiumWebDriver
-from instappium.common import Logger
 
 # libraries import
 from time import sleep
@@ -13,18 +11,16 @@ class AppiumCommonActions(object):
     class for all the common actions (not related to user, comment, post, story)
     """
 
-    @classmethod
-    def go_profile(cls):
+    def go_profile(self):
         """
 
         :param driver:
         :return:
         """
-        profile = AppiumWebDriver.find_elements_by_xpath("//android.widget.FrameLayout[@content-desc='Profile' and @index=4]")
-        AppiumWebDriver.click(profile[0])
+        profile = self.webdriver_instance.find_elements_by_xpath("//android.widget.FrameLayout[@content-desc='Profile' and @index=4]")
+        self.webdriver_instance.click(profile[0])
 
-    @classmethod
-    def go_user(cls,user):
+    def go_user(self,user):
 
         cls._go_search()
 
@@ -46,8 +42,7 @@ class AppiumCommonActions(object):
         # searching on the app is the way to move from one user to another
         # if the list is not null then we should click on it to go to that user
 
-    @classmethod
-    def go_down(cls, amount):
+    def go_down(self, amount):
         # we should find max boundaries of the screen
         # and randomly select the starting, ending point
 
@@ -59,7 +54,6 @@ class AppiumCommonActions(object):
                               init_x,
                               init_y+amount)
 
-    @classmethod
     def _go_search(cls):
         elem = AppiumWebDriver.find_elements_by_xpath("//android.widget.FrameLayout[@content-desc='Search and Explore' and @index=1]")
         AppiumWebDriver.click(elem[0])

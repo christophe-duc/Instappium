@@ -12,14 +12,8 @@ from .appium_post_actions import AppiumPostActions
 from .appium_comment_actions import AppiumCommentActions
 
 
-class AppiumActions(AppiumCommonActions):
-    user = None
-    post = None
-    comment = None
-    common = None
-
-    def __init__(self):
-        self.user = AppiumUserActions()
-        self.post = AppiumPostActions()
-        self.comment = AppiumCommentActions()
-        self.common = AppiumCommonActions()
+class AppiumActions(AppiumCommonActions,
+                    AppiumCommentActions,
+                    AppiumUserActions,
+                    AppiumPostActions):
+    pass

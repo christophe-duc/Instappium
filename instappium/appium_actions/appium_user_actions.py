@@ -1,9 +1,7 @@
 """
 Class to define the specific actions for the User class to work with Appium
 """
-from .appium_common_actions import AppiumCommonActions
-from ..appium_webdriver import AppiumWebDriver
-from .appium_post_actions import AppiumPostActions
+
 
 
 class AppiumUserActions:

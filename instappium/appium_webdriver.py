@@ -3,7 +3,11 @@ Class to define everything needed to work with Appium
 """
 
 #class import
-from instappium.common import Logger
+from .common import Logger
+from .appium_actions import AppiumCommonActions
+from .appium_actions import AppiumPostActions
+from .appium_actions import AppiumUserActions
+from .appium_actions import AppiumCommentActions
 
 # libraries import
 from appium import webdriver
@@ -11,13 +15,16 @@ from ppadb.client import Client as AdbClient
 from time import sleep
 
 
-class AppiumWebDriver:
+class AppiumWebDriver(AppiumCommonActions,
+                    AppiumCommentActions,
+                    AppiumUserActions,
+                    AppiumPostActions):
     """
     Appium WebDriver class
     """
     _adb_client = None
     _web_driver_instance = None
-    __DISPLAYSIZE = None
+    DISPLAYSIZE = None
 
     def __init__(
         self,
@@ -25,6 +32,7 @@ class AppiumWebDriver:
         devicetimeout: int = 600,
         client_host: str = "127.0.0.1",
         client_port: int = 5037,
+        logger: Logger = None
     ):
 
         self._adb_client = AdbClient(host=client_host, port=client_port)
@@ -45,19 +53,19 @@ class AppiumWebDriver:
 
             try:
                 self._web_driver_instance = webdriver.Remote(
-                    "http://{}:4723/wd/hub".format(client_host), __desired_caps
+                    "http://{}:4723/wd/hub".format(client_host), desired_caps
                 )
-                Logger.info("Succesfully connected to: {}".format(devicename))
-                self.__DISPLAYSIZE = self._web_driver_instance.get_window_size()
+                logger.loginfo("Succesfully connected to: {}".format(devicename))
+                self.DISPLAYSIZE = self._web_driver_instance.get_window_size()
                 sleep(10)
             except:
                 # self.logger.error("Could not create webdriver, is Appium running?")
-                Logger.error("Could not create webdriver; please make sure Appium is running")
+                logger.logerror("Could not create webdriver; please make sure Appium is running")
                 quit()  # TODO: nicer way of exiting
 
         else:
 
-            Logger.error(
+            logger.logerror(
                 "Invalid Device Name. \nList of available devices: [{}]".format(
                     ", ".join(self._get_adb_devices())
                 )
@@ -121,5 +129,10 @@ class AppiumWebDriver:
     def current_activity(self):
         return self._web_driver_instance.current_activity
 
-    def swipe(self,x1,y1,x2,y2,duration):
-        return self._web_driver_instance.swipe(x1,y1,x2,y2,duration)
+    def refresh_feed(self):
+        self._web_driver_instance.swipe(self.DISPLAYSIZE['width'] / 2,
+                                        self.DISPLAYSIZE['height']/4,
+                                        self.DISPLAYSIZE['width'] / 2,
+                                        self.DISPLAYSIZE['height'] / 2,
+                                        1000)
+

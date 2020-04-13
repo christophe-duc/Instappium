@@ -2,29 +2,40 @@
 
 from .appium_webdriver import AppiumWebDriver
 from .common.xpath import xpath
-from instappium.common import Logger
+from .common import Logger
 
 from time import sleep
 
-class InstAppium:
+
+class InstAppium (Logger):
     """
     Class to be instantiated to use the script
-    """
-    _webdriver = None
+    class variable:
+        - None
+    instance variable:
+        - _webdriver
+        - username
+        - password
+        - device
 
-    def __init__(self, username: str = None, password: str = None, device: str = None):
+    """
+
+    def __init__(self, username: str = '', password: str = '', device: str = '', logfolder: str = '', show_logs: bool = False, log_handler: object = None):
         """
-        basic initialization
+
         """
-        self._username = username
-        self._password = password
-        self._device = device
+        Logger.__init__(self, username, logfolder, show_logs, log_handler)
+        self.username = username
+        self.password = password
+        self.device = device
 
         try:
-            self._webdriver = AppiumWebDriver(devicename=device)
+            self._webdriver = AppiumWebDriver(devicename=device, logger=self)
         except:
-            Logger.error("Could not create webdriver; please make sure Appium is running")
+            self.logerror("Could not create webdriver; please make sure Appium is running")
             quit()
+
+        self.highlight_print(message="Connected to Appium successfully", message_type="initialization", level="info")
 
         current_activity = self._webdriver.current_activity().split('.')[-1]
 
@@ -44,7 +55,9 @@ class InstAppium:
             log_in[0].click()
 
             if self._webdriver.current_activity().split('.')[-1] == 'MainActivity':
-                print('Succesfully Logged in!')
+                self.highlight_print(message="Login successful", message_type="login", level="info")
 
     def main(self):
-        self._webdriver.swipe(0, 0, 0, 100, 100)
+        print(self._webdriver.DISPLAYSIZE)
+
+

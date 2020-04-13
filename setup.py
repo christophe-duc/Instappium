@@ -26,7 +26,7 @@ with open("requirements.txt") as f:
 
 documentation = readall("README.md")
 metadata = dict(
-    re.findall(r"""__([a-z]+)__ = "([^"]+)""", readall("instapy", "__init__.py"))
+    re.findall(r"""__([a-z]+)__ = "([^"]+)""", readall("instappium", "__init__.py"))
 )
 
 setup(
@@ -51,13 +51,6 @@ setup(
     # include_package_data=True,  # <- packs every data file in the package
     package_data={  # we need only the files below:
         "instappium": [
-            "icons/Windows/*.ico",
-            "icons/Linux/*.png",
-            "icons/Mac/*.icns",
-            "firefox_extension/*",
-            "drivers/*",
-            "drivers/appium_actions/*",
-            "drivers/selenium_actions/*",
 	        "common/*",
             "common/model/*",
             "engine/*",
