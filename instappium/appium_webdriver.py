@@ -111,7 +111,7 @@ class AppiumWebDriver(AppiumCommonActions,
         return self._web_driver_instance
 
 
-    def find_elements_by_xpath(self, xpath: str = ""):
+    def find_element_by_xpath(self, xpath: str = ""):
         """
         wrapper for find_element by_xpath
         :param xpath:
