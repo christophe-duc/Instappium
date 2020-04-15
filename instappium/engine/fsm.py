@@ -6,14 +6,10 @@ from transitions import Machine
 import random
 
 # Class import
-from ..appium_actions import AppiumCommonActions
-from ..appium_actions import AppiumUserActions
-from ..appium_actions import AppiumPostActions
-from ..appium_actions import AppiumCommentActions
+from ..appium_webdriver import AppiumWebDriver
 
 
-
-class FSMSession(AppiumCommonActions, AppiumUserActions, AppiumPostActions, AppiumCommentActions):
+class FSMSession(object):
     """
     Define all the states and transitions, callbacks of an instagram session
 
@@ -27,22 +23,28 @@ class FSMSession(AppiumCommonActions, AppiumUserActions, AppiumPostActions, Appi
 
     # all_possible_states
     states = [
-        'on_home',
-        'on_search',
-        'on_camera',
-        'on_activity',
-        'on_profile',
-        'interacted',
-        'watched'
+        'home_page',
+        'search_page',
+        'camera_page',
+        'activity_page',
+        'profile_page',
+        'comment_page',
+        'story_page',
+        'feed',
+        'idle',
     ]
 
     # all possible transitions
     transitions = [
-        {'trigger': 'go_home', 'source': '*', 'dest': 'on_home'},
-        {'trigger': 'go_search', 'source': '*', 'dest': 'on_search'},
-        {'trigger': 'go_camera', 'source': '*', 'dest': 'on_camera'},
-        {'trigger': 'go_activity', 'source': '*', 'dest': 'on_activity'},
-        {'trigger': 'go_profile', 'source': '*', 'dest': 'on_profile'},
+        {'trigger': 'session.go_home', 'source': '*', 'dest': 'home_page'},
+        {'trigger': 'session.go_search', 'source': '*', 'dest': 'search_page'},
+        {'trigger': 'session.go_camera', 'source': '*', 'dest': 'camera_page'},
+        {'trigger': 'session.go_activity', 'source': '*', 'dest': 'activity_page'},
+        {'trigger': 'session.go_profile', 'source': '*', 'dest': 'profile_page'},
+        {'trigger': 'session.watch_story', 'source': ['home_page', 'profile_page'], 'dest': 'story_page'},
+        {'trigger': 'session.go_home', 'source': 'idle', 'dest': 'home_page'},
+        {'trigger': 'do_sleep', 'source': 'idle', 'dest': 'idle'}
+
     ]
 
     # functions to call for doing the triggered action
@@ -58,46 +60,46 @@ class FSMSession(AppiumCommonActions, AppiumUserActions, AppiumPostActions, Appi
         {'watch': ''}
     ]
 
-    machine = None
-
     #currently safe default numbers
     quota = {
         "peak_likes": (40, 400),
         "peak_comments":  (20, 200),
         "peak_follows": (20, 200),
         "peak_unfollows": (50, 200),
-        "peak_server_calls": (300, 3500)
     }
 
-    # the stacks permit to pass the actions between states if we need to
-    # and it works by a simple .append(), .pop()
-    # stack of posts to do actions on
-    posts_stack = {}
-    posts_stack_likes = {}
-    posts_stack_comment = {}
-    # stack of users to do action on
-    users_stack = {}
-    users_stack_follow = {}
-    users_stack_interact = {}
-    users_stack_unfollow = {}
-    #stack of comments to do action
-    comments_stack = {}
-    comments_stack_like = {}
-    comments_stack_reply = {}
-
-
-    def __init__(self, quota: dict = None, actions: dict = None):
+    def __init__(self, session: AppiumWebDriver, quota: dict = None, actions_config: dict = None, ):
         """
         Initialization of the FSM with what we want to do
 
         :param quota: the quota information
         :param actions: what we want to do
+        :param session: the initialized AppiumWebDriver
         """
         # we should initialize the state machine according to the config
         # no need to have followed states if following is not configured
 
         print("auto-configure states and transitions here!")
-        self.machine = Machine(model=self, states=states, transitions=transitions, initial='idle')
+        self.machine = Machine(model=self,
+                               states=self.states,
+                               transitions=self.transitions,
+                               initial='idle')
+        if not quota:
+            self.quota = quota
+
+        self.actions_config = actions_config
+
+        self.session = session
+
+        # Keep a stack of previous states we can go back to with the back button
+        self.stack = {}
+        # session stats
+        self.followed = 0
+        self.unfollowed = 0
+        self.liked = 0
+        self.commented = 0
+        self.watched = 0
+
 
     def on_enter_home(self):
         """
@@ -119,43 +121,12 @@ class FSMSession(AppiumCommonActions, AppiumUserActions, AppiumPostActions, Appi
         """
         # here we should have in the state machine only the states we can do
         # because we have data, otherwise the only state that it can go is in idle
-        next_transition="go_"+random.sample(self.states,1)
+        next_transition = "go_"+random.sample(self.states,1)
         self.machine.trigger(next_transition)
 
-    def go_home(self):
-        """
-        do more work or fetch more data else stay idle
-        :return:
-        """
-        if (len(self.users_stack) > 0) or (len(self.posts_stack) >0):
-            self.machine.trigger('do_work')
-        else:
-            if self.nomore_data is False:
-                self.machine.trigger('do_gather_data')
+        # we arrive at a permanent state of the FSM, we stay idle forever
 
-        #we arrive at a permanent state of the FSM, we stay idle forever
-
-    def go_follow(self):
-        """
-        execute the actions needed to follow a user
-        :return:
-        """
-        # quota is plugged in directly into each action
-        # so we should wait if we are over automatically
-        # no need to plug that in
-        print("doing the follow action")
-
-    def go_unfollow(self):
-        """
-        execute the actions needed to unfollow a user
-        :return:
-        """
-        # quota is plugged in directly into each action
-        # so we should wait if we are over automatically
-        # no need to plug that in
-        print("doing the unfollow action")
-
-    def on_enter_followed(self):
+    def on_exit_followed(self):
         """
         we had a successfull follow
         :return:
@@ -163,35 +134,17 @@ class FSMSession(AppiumCommonActions, AppiumUserActions, AppiumPostActions, Appi
         # update the fsm info
         # but not really needed as each function will update everything it need
         # into live session
-        self.followed_action +=1
-
-        # clean up
-        self.users_stack_follow.pop()
+        self.followed += 1
 
 
-    def on_enter_unfollowed(self):
+    def on_exit_unfollowed(self):
         """
         we had an successfull unfollow
         :return:
         """
-        self.unfollowed_action +=1
+        self.unfollowed += 1
 
-        self.users_stack_unfollow.pop()
 
-    def do_gather_data(self):
-        """
-        This function should execute gathering data from the usual functions of a script
-        for example if we want to do follow_likers, then we should call the InstaPy function that gather the username of the likers
-        and so on...
-
-        This might be difficult as the InstaPy code might not be organized to support those functions separately
-        Shall we mock/rewrite those functions?? How do we solve this
-        Have an fsm_ entry point in class InstaPy
-        or we should just leave this complexity outside for the moment and just expect that the state machine is initialized with the correct
-        users, post to work on
-        :return:
-        """
-        print("do nothing for the moment???")
 
 
 

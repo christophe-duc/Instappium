@@ -27,7 +27,7 @@ class AppiumWebDriver(AppiumCommonActions,
     def __init__(
         self,
         devicename: str = "",
-        devicetimeout: int = 600,
+        devicetimeout: int = 30,
         client_host: str = "127.0.0.1",
         client_port: int = 5037,
         logger: Logger = None
@@ -111,7 +111,7 @@ class AppiumWebDriver(AppiumCommonActions,
         return self._web_driver_instance
 
 
-    def find_element_by_xpath(self, xpath: str = ""):
+    def find_elements_by_xpath(self, xpath: str = ""):
         """
         wrapper for find_element by_xpath
         :param xpath:
@@ -119,15 +119,15 @@ class AppiumWebDriver(AppiumCommonActions,
         """
         return self._web_driver_instance.find_elements_by_xpath(xpath)
 
-    def find_element_by_id(self, resource_id: str = ""):
+    def find_elements_by_id(self, resource_id: str = ""):
         """
         wrapper for find_element_by_id
         :param resource_id:
         :return:
         """
-        return self._web_driver_instance.find_element_by_id(resource_id)
+        return self._web_driver_instance.find_elements_by_id(resource_id)
 
-    def find_element_by_uiautomator(self, uiautomator: str = ""):
+    def find_elements_by_uiautomator(self, uiautomator: str = ""):
         """
         wrapper for find_element_by_android_uiautomator
         :param uiautomator:
