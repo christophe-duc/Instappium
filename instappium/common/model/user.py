@@ -84,9 +84,9 @@ class User():
         """
         return self._following_count
 
-    @follower_count.setter
+    @following_count.setter
     def following_count(self, amount):
-        return self._following_count
+        self._following_count = amount
 
     @property
     def bio(self):

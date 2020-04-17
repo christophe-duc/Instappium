@@ -32,10 +32,10 @@ class AppiumCommonActions(object):
             elem = self.driver.find_elements_by_id(xpath.read_xpath("profile", "username_back"))
 
         username = elem[0].text
-        print(username)
         posts = _cleanup_count(self.driver.find_elements_by_id(xpath.read_xpath("profile", "posts"))[0].text)
         followers = _cleanup_count(self.driver.find_elements_by_id(xpath.read_xpath("profile", "followers"))[0].text)
         following = _cleanup_count(self.driver.find_elements_by_id(xpath.read_xpath("profile", "following"))[0].text)
+        print("following={}".format(following))
         full_name = self.driver.find_elements_by_id(xpath.read_xpath("profile", "fullname"))[0].text
 
         elem = self.driver.find_elements_by_id(xpath.read_xpath("profile", "bio"))
@@ -59,7 +59,7 @@ class AppiumCommonActions(object):
                     category=category,
                     )
 
-    def _scroll_down(self, amount):
+    def _scroll(self, amount):
         # we should find max boundaries of the screen
         # and randomly select the starting, ending point
 
@@ -73,8 +73,7 @@ class AppiumCommonActions(object):
 
     def go_profile(self):
         """
-        user the action bacr to go to the user profile
-        :param driver:
+        user the action bar to go to the user profile
         :return:
         """
         profile = self.driver.find_elements_by_xpath(xpath.read_xpath("action_bar", "profile"))
@@ -100,10 +99,14 @@ class AppiumCommonActions(object):
         elem = self.driver.find_elements_by_id(xpath.read_xpath("search", "search_text"))
         elem[0].click()
         sleep(1)
-        # we should use sendkeys here if possible
+
         elem = self.driver.find_elements_by_id(xpath.read_xpath("search", "search_text"))
+        # we might want to open the keyboard and do a sendkey on that
+        # .getkeyboard().send_keys
+        # self.driver.get_keyboard().send_keys(item)
         elem[0].send_keys(item)
         sleep(3)
+        # self.driver.hide_keyboard()
 
         elem = self.driver.find_elements_by_xpath(xpath.read_xpath("search", search_type))
 
@@ -130,4 +133,6 @@ class AppiumCommonActions(object):
                     return {"status": True}
 
     def go_back(self):
-        self.driver.find_elements_by_id(xpath.read_xpath("action_bar", "back"))[0].click()
+        elem = self.driver.find_elements_by_id(xpath.read_xpath("action_bar", "back"))
+        if len(elem) != 0:
+            elem[0].click()
