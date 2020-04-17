@@ -47,19 +47,6 @@ class FSMSession(object):
 
     ]
 
-    # functions to call for doing the triggered action
-    # This is very problematic as there is no uniform prototyping and no clear boundaries when
-    # and action start or finish. So different functions here covers different things
-    # ideally we need a unified prototype (**kvargs) and unitary actions
-    actions = [
-        {'go_home': 'follow_by_list'},
-        {'go_search': 'unfollow_user'},
-        {'go_camera': 'like_image'},
-        {'go_activity': ''},
-        {'go_profile': ''},
-        {'watch': ''}
-    ]
-
     #currently safe default numbers
     quota = {
         "peak_likes": (40, 400),

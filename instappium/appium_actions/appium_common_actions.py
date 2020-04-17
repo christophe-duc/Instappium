@@ -1,15 +1,16 @@
 """
 Class to define the specific actions for the Common class to work with Appium
 """
+
+# libraries import
+import threading
+from time import sleep
+import random
+
 # class import
 from ..common.xpath import xpath
 from ..common.model.user import User
 from .helper_functions import _cleanup_count
-
-# libraries import
-from time import sleep
-import random
-from selenium.common.exceptions import NoSuchElementException
 
 
 class AppiumCommonActions(object):
@@ -121,18 +122,45 @@ class AppiumCommonActions(object):
             print('item=' + f_item.text)
             if f_item.text.lower().replace('#', '') == item:
                 f_item.click()
-                sleep(2)
+                sleep(5)
                 # get the data we can:
 
                 if search_type == "accounts":
                     user: User = self._get_userdata()
+
+                    # when we are done we should go back twice to leave everything clean (the state machine should do it)
+
                     return {"status": True, "user": user}
 
                 else:
                     # in the case of hashtags and places we get a grid of posts
+
+                    # when we are done we should also clean everything
                     return {"status": True}
+
 
     def go_back(self):
         elem = self.driver.find_elements_by_id(xpath.read_xpath("action_bar", "back"))
         if len(elem) != 0:
             elem[0].click()
+
+    def go_home(self):
+        elem = self.driver.find_elements_by_xpath(xpath.read_xpath("action_bar", "home"))
+        if len(elem) != 0:
+            elem[0].click()
+
+    def go_activity(self):
+        elem = self.driver.find_elements_by_xpath(xpath.read_xpath("action_bar", "activity"))
+        if len(elem) != 0:
+            elem[0].click()
+
+    def keep_alive(self):
+        thread = threading.Thread(target=self._idle, args=())
+        thread.daemon = True
+        thread.start()
+
+    def _idle(self):
+        while True:
+            _ = self.driver.orientation
+            sleep(20)
+

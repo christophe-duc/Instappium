@@ -35,6 +35,7 @@ class InstAppium (Logger):
             quit()
 
         self.highlight_print(message="Connected to Appium successfully", message_type="initialization", level="info")
+        self._webdriver.keep_alive()
 
         current_activity = self._webdriver.current_activity().split('.')[-1]
 

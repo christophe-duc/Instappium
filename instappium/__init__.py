@@ -4,3 +4,4 @@
 __version__ = "0.0.1"
 
 from .instappium import InstAppium
+from .engine import FSMSession
