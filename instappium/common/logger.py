@@ -27,62 +27,72 @@ class Logger(object):
       - log_handler
     """
 
-    def __init__(
-        self,
+    username = ''
+    logfolder = ''
+    show_logs = False
+    log_handler = None
+    __logfile = None
+
+    @classmethod
+    def initlogger(
+        cls,
         username: str = "",
         logfolder: str = "",
         show_logs: bool = False,
         log_handler=None,
     ):
-        self.username = username
-        self.logfolder = logfolder
-        self.show_logs = show_logs
+        cls.username = username
+        cls.logfolder = logfolder
+        cls.show_logs = show_logs
 
-        self.__logfile = logging.getLogger(self.username)
-        self.__logfile.setLevel(logging.DEBUG)
-        file_handler = logging.FileHandler("{}general.log".format(self.logfolder))
+        cls.__logfile = logging.getLogger(username)
+        cls.__logfile.setLevel(logging.DEBUG)
+        file_handler = logging.FileHandler("{}general.log".format(logfolder))
         file_handler.setLevel(logging.DEBUG)
-        extra = {"username": self.username}
+        extra = {"username": username}
         logger_formatter = logging.Formatter(
             "%(levelname)s [%(asctime)s] [%(username)s]  %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",
         )
         file_handler.setFormatter(logger_formatter)
-        self.__logfile.addHandler(file_handler)
+        cls.__logfile.addHandler(file_handler)
 
         # add custom user handler if given
         if log_handler:
-            self.__logfile.addHandler(log_handler)
+            cls.__logfile.addHandler(log_handler)
 
-        if self.show_logs is True:
+        if cls.show_logs is True:
             console_handler = logging.StreamHandler()
             console_handler.setLevel(logging.DEBUG)
             console_handler.setFormatter(logger_formatter)
-            self.__logfile.addHandler(console_handler)
+            cls.__logfile.addHandler(console_handler)
 
-        self.__logfile = logging.LoggerAdapter(self.__logfile, extra)
+        cls.__logfile = logging.LoggerAdapter(cls.__logfile, extra)
 
-    @property
-    def logfile(self):
-        return self.__logfile
+    @classmethod
+    def logfile(cls):
+        return cls.__logfile
 
-    def loginfo(self, message: str = ""):
-        self.__logfile.info(message)
+    @classmethod
+    def loginfo(cls, message: str = ""):
+        cls.__logfile.info(message)
 
-    def logerror(self, message: str = ""):
-        self.__logfile.error(message)
+    @classmethod
+    def logerror(cls, message: str = ""):
+        cls.__logfile.error(message)
 
-    def logwarning(self, message: str = ""):
-        self.__logfile.warning(message)
+    def logwarning(cls, message: str = ""):
+        cls.__logfile.warning(message)
 
-    def highlight_print(self, message=None, message_type=None, level=None):
+    @classmethod
+    def highlight_print(cls, message=None, message_type=None, level=None):
         """ Print headers in a highlighted style """
 
         upper_char = ""
         lower_char = ""
 
         output_len = (
-            28 + len(self.username) + 3 + len(message) if self.__logfile else len(message)
+            28 + len(self.username) + 3 + len(message) if cls.__logfile else len(message)
         )
 
         if message_type in ["initialization", "end"]:
@@ -124,22 +134,22 @@ class Logger(object):
             upper_char = " ._. "
             lower_char = None
 
-        if upper_char and (self.show_logs or message_type == "workspace"):
+        if upper_char and (cls.show_logs or message_type == "workspace"):
             print("{}".format(upper_char * int(ceil(output_len / len(upper_char)))))
 
         if level == "info":
-            if self.__logfile:
-                self.loginfo(message)
+            if cls.__logfile:
+                cls.loginfo(message)
             else:
                 print(message)
 
         elif level == "warning":
-            if self.__logfile:
-                self.logwarning(message)
+            if cls.__logfile:
+                cls.logwarning(message)
             else:
                 print(message)
 
-        if lower_char and (self.show_logs or message_type == "workspace"):
+        if lower_char and (cls.show_logs or message_type == "workspace"):
             print("{}".format(lower_char * int(ceil(output_len / len(lower_char)))))
 
     @staticmethod
