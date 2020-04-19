@@ -30,7 +30,6 @@ class AppiumWebDriver(AppiumCommonActions,
         devicetimeout: int = 30,
         client_host: str = "127.0.0.1",
         client_port: int = 5037,
-        logger: Logger = None
     ):
         """
 
@@ -72,17 +71,17 @@ class AppiumWebDriver(AppiumCommonActions,
                 self._web_driver_instance = webdriver.Remote(
                     "http://{}:4723/wd/hub".format(client_host), desired_caps
                 )
-                logger.loginfo("Succesfully connected to: {}".format(devicename))
+                Logger.loginfo("Succesfully connected to: {}".format(devicename))
                 self.DISPLAYSIZE = self._web_driver_instance.get_window_size()
                 sleep(10)
             except:
                 # self.logger.error("Could not create webdriver, is Appium running?")
-                logger.logerror("Could not create webdriver; please make sure Appium is running")
+                Logger.logerror("Could not create webdriver; please make sure Appium is running")
                 quit()  # TODO: nicer way of exiting
 
         else:
 
-            logger.logerror(
+            Logger.logerror(
                 "Invalid Device Name. \nList of available devices: [{}]".format(
                     ", ".join(self._get_adb_devices())
                 )

@@ -92,7 +92,7 @@ class Logger(object):
         lower_char = ""
 
         output_len = (
-            28 + len(self.username) + 3 + len(message) if cls.__logfile else len(message)
+            28 + len(cls.username) + 3 + len(message) if cls.__logfile else len(message)
         )
 
         if message_type in ["initialization", "end"]:
