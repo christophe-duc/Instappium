@@ -23,23 +23,12 @@ class Settings:
 
     # store user-defined delay time to sleep after doing actions
     action_delays = {}
-
-    # store configuration of text analytics
-    meaningcloud_config = {}
-    yandex_config = {}
-
-    user_agent = (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36"
-    )
-
-    # state of instantiation of InstaPy
-    InstAppium_is_running = False
-
-    devicename = None
-    devicetimeout = None
-    client_host = None
-    client_port = None
+    action_config = {}
+    comments = []
+    ignore_users = []
+    mandatory_words = []
+    ignore_if_contains = []
+    dont_unfollow = []
 
     @classmethod
     def set_action_delays(
@@ -74,41 +63,31 @@ class Settings:
         E.g. percentage=25 means every ~4th picture will be commented.
         """
 
-        cls.do_comment = enabled
-        cls.comment_percentage = percentage
+        cls.action_config['comment'] = enabled
+        cls.action_config['comment_percentage'] = percentage
 
     @classmethod
-    def set_comments(cls, comments: list = [], media: str = None):
+    def set_comments(cls, comments: list):
         """
         Sets the possible posted comments.
         'What an amazing shot :heart_eyes: !' is an example for using emojis.
         """
 
-        if media not in [None, "Photo", "Video"]:
-            Logger.warning('Unkown media type! Treating as "any".')
-            media = None
-
         cls.comments = comments
-
-        if media is None:
-            cls.comments = comments
-        else:
-            attr = "{}_comments".format(media.lower())
-            setattr(cls, attr, comments)
 
     @classmethod
     def set_do_follow(cls, enabled: bool = False, percentage: int = 0, times: int = 1):
         """Defines if the user of the liked image should be followed"""
 
-        cls.follow_times = times
-        cls.do_follow = enabled
-        cls.follow_percentage = percentage
+        cls.action_config['follow_times'] = times
+        cls.action_config['follow'] = enabled
+        cls.action_config['follow_percentage'] = min(percentage, 100)
 
     @classmethod
     def set_do_like(cls, enabled: bool = False, percentage: int = 0):
 
-        cls.do_like = enabled
-        cls.like_percentage = min(percentage, 100)
+        cls.action_config['like'] = enabled
+        cls.action_config['like_percentage'] = min(percentage, 100)
 
     @classmethod
     def set_do_story(
@@ -121,30 +100,23 @@ class Settings:
             simulate: if True, we will simulate watching (faster),
                       but nothing will be seen on the browser window
         """
-        cls.do_story = enabled
-        cls.story_percentage = min(percentage, 100)
-        cls.story_simulate = simulate
+        cls.action_config['story'] = enabled
+        cls.action_config['story_percentage'] = min(percentage, 100)
 
     @classmethod
-    def set_dont_like(cls, tags: list = []):
+    def set_dont_like(cls, tags: list):
         """Changes the possible restriction tags, if one of this
          words is in the description, the image won't be liked but user
          still might be unfollowed"""
 
-        if not isinstance(tags, list):
-            Logger.warning("Unable to use your set_dont_like " "configuration!")
-        else:
-            cls.dont_like = tags
+        cls.action_config['like_donot'] = tags
 
     @classmethod
-    def set_mandatory_words(cls, tags: list = []):
+    def set_mandatory_words(cls, tags: list):
         """Changes the possible restriction tags, if all of this
          hashtags is in the description, the image will be liked"""
 
-        if not isinstance(tags, list):
-            Logger.warning("Unable to use your set_mandatory_words " "configuration!")
-        else:
-            cls.mandatory_words = tags
+        cls.mandatory_words = tags
 
     @classmethod
     def set_user_interact(
@@ -156,20 +128,20 @@ class Settings:
     ):
         """Define if posts of given user should be interacted"""
 
-        cls.user_interact_amount = amount
-        cls.user_interact_random = randomize
-        cls.user_interact_percentage = percentage
-        cls.user_interact_media = media
+        cls.action_config['user_interact_amount'] = amount
+        cls.action_config['user_interact_random'] = randomize
+        cls.action_config['user_interact_percentage'] = percentage
+        cls.action_config['user_interact_media'] = media
 
     @classmethod
-    def set_ignore_users(cls, users: list = []):
+    def set_ignore_users(cls, users: list ):
         """Changes the possible restriction to users, if a user who posts
         is one of these, the image won't be liked"""
 
         cls.ignore_users = users
 
     @classmethod
-    def set_ignore_if_contains(cls, words: list = []):
+    def set_ignore_if_contains(cls, words: list):
         """Ignores the don't likes if the description contains
         one of the given words"""
 
@@ -179,12 +151,11 @@ class Settings:
     def set_dont_include(cls, friends: list = None):
         """Defines which accounts should not be unfollowed"""
 
-        cls.dont_include = set(friends) or set()
-        cls.white_list = set(friends) or set()
+        cls.dont_unfollow = friends
 
-    @classmethod
-    def set_switch_language(cls, option: bool = True):
-        cls.switch_language = option
+    # @classmethod
+    # def set_switch_language(cls, option: bool = True):
+    #     cls.switch_language = option
 
     @classmethod
     def set_mandatory_language(
@@ -221,10 +192,3 @@ class Settings:
 
         cls.mandatory_language = enabled
         cls.mandatory_character = char_set
-
-
-class Storage:
-    """ Globally accessible standalone storage """
-
-    # store realtime record activity data
-    record_activity = {}

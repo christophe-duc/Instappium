@@ -6,6 +6,7 @@ from transitions import Machine
 import random
 
 # Class import
+from ..common import Settings
 from ..appium_webdriver import AppiumWebDriver
 
 
@@ -23,39 +24,48 @@ class FSMSession(object):
 
     # all_possible_states
     states = [
-        'home_page',
-        'search_page',
-        'camera_page',
-        'activity_page',
-        'profile_page',
-        'comment_page',
-        'story_page',
+        'homepage',
+        'searchpage',
+        'activitypage',
+        'profilepage',
+        'commentpage',
+        'storypage',
         'feed',
         'idle',
     ]
 
     # all possible transitions
     transitions = [
-        {'trigger': 'session.go_home', 'source': '*', 'dest': 'home_page'},
-        {'trigger': 'session.go_search', 'source': '*', 'dest': 'search_page'},
-        {'trigger': 'session.go_camera', 'source': '*', 'dest': 'camera_page'},
-        {'trigger': 'session.go_activity', 'source': '*', 'dest': 'activity_page'},
-        {'trigger': 'session.go_profile', 'source': '*', 'dest': 'profile_page'},
-        {'trigger': 'session.watch_story', 'source': ['home_page', 'profile_page'], 'dest': 'story_page'},
-        {'trigger': 'session.go_home', 'source': 'idle', 'dest': 'home_page'},
+        {'trigger': 'go_homepage', 'source': '*', 'dest': 'home_page'},
+        {'trigger': 'go_searchpage', 'source': '*', 'dest': 'search_page'},
+        # {'trigger': 'go_camera', 'source': '*', 'dest': 'camera_page'},
+        {'trigger': 'go_activitypage', 'source': '*', 'dest': 'activity_page'},
+        {'trigger': 'go_profilepage', 'source': '*', 'dest': 'profile_page'},
+        {'trigger': 'go_storypage', 'source': ['home_page', 'profile_page'], 'dest': 'story_page'},
+        {'trigger': 'go_homepage', 'source': 'idle', 'dest': 'home_page'},
         {'trigger': 'do_sleep', 'source': 'idle', 'dest': 'idle'}
-
     ]
 
-    #currently safe default numbers
-    quota = {
-        "peak_likes": (40, 400),
-        "peak_comments":  (20, 200),
-        "peak_follows": (20, 200),
-        "peak_unfollows": (50, 200),
-    }
+    # expected actions_config parameters
+    # { 'hashtags': ['#instagood', ...],
+    #   'users': ['thisisbillgates', ... ],
+    #   'locations': ['antartica', ...],
+    #   'comments': ['this is a test', ...],
+    #   'follow': True,
+    #   'unfollow': True,
+    #   'stories': True,
+    #   'story_reactions': ['love','applause', ...]
+    # }
 
-    def __init__(self, session: AppiumWebDriver, quota: dict = None, actions_config: dict = None, ):
+    #currently safe default numbers
+    # quota = {
+    #     "peak_likes": (40, 400),
+    #     "peak_comments":  (20, 200),
+    #     "peak_follows": (20, 200),
+    #     "peak_unfollows": (50, 200),
+    # }
+
+    def __init__(self, session: AppiumWebDriver, settings: Settings):
         """
         Initialization of the FSM with what we want to do
 
@@ -71,15 +81,13 @@ class FSMSession(object):
                                states=self.states,
                                transitions=self.transitions,
                                initial='idle')
-        if not quota:
-            self.quota = quota
-
-        self.actions_config = actions_config
 
         self.session = session
-
+        self.settings = settings
         # Keep a stack of previous states we can go back to with the back button
-        self.stack = {}
+        self.stack_searchpage = {}
+        self.stack_homepage = {}
+        self.stack_activity = {}
         # session stats
         self.followed = 0
         self.unfollowed = 0
@@ -87,16 +95,28 @@ class FSMSession(object):
         self.commented = 0
         self.watched = 0
 
+    def go_homepage(self):
+        """
 
-    def on_enter_home(self):
+        :return:
+        """
+        self.session.go_home()
+
+    def on_enter_homepage(self):
         """
 
         :return:
         """
 
-    def on_exit_home(self):
+    def on_exit_homepage(self):
         """
 
+        :return:
+        """
+
+    def go_searchpage(self):
+        """
+        Take what we have into the actions_config and search for it so we can like or follow
         :return:
         """
 

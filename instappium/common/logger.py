@@ -18,13 +18,13 @@ class Logger(object):
     """
     should contain all the function used throughout the code related to logging
     Class vars:
-      -
-    Instance vars:
       - __logfile
       - username
       - logfolder
       - show_logs
       - log_handler
+    Instance vars:
+
     """
 
     username = ''
