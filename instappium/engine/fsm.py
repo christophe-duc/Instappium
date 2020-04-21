@@ -25,7 +25,7 @@ class FSMSession(object):
     # all_possible_states
     states = [
         'homepage',
-        'searchpage',
+        'searchpage', 'searchpage_user'
         'activitypage',
         'profilepage',
         'commentpage',
@@ -36,13 +36,15 @@ class FSMSession(object):
 
     # all possible transitions
     transitions = [
-        {'trigger': 'go_homepage', 'source': '*', 'dest': 'home_page'},
-        {'trigger': 'go_searchpage', 'source': '*', 'dest': 'search_page'},
+        {'trigger': 'go_homepage', 'source': '*', 'dest': 'homepage'},
+        {'trigger': 'go_searchpage', 'source': '*', 'dest': 'searchpage'},
+        {'trigger': 'go_searchpage_user', 'source': 'searchpage', 'dest': 'user'},
+        {'trigger': 'do_feed', 'source': 'searchpage', 'dest': 'feed'},
         # {'trigger': 'go_camera', 'source': '*', 'dest': 'camera_page'},
-        {'trigger': 'go_activitypage', 'source': '*', 'dest': 'activity_page'},
-        {'trigger': 'go_profilepage', 'source': '*', 'dest': 'profile_page'},
-        {'trigger': 'go_storypage', 'source': ['home_page', 'profile_page'], 'dest': 'story_page'},
-        {'trigger': 'go_homepage', 'source': 'idle', 'dest': 'home_page'},
+        {'trigger': 'go_activitypage', 'source': '*', 'dest': 'activitypage'},
+        {'trigger': 'go_profilepage', 'source': '*', 'dest': 'profilepage'},
+        {'trigger': 'go_storypage', 'source': ['homepage', 'profilepage'], 'dest': 'storypage'},
+        {'trigger': 'go_idle', 'source': '*', 'dest': 'idle'},
         {'trigger': 'do_sleep', 'source': 'idle', 'dest': 'idle'}
     ]
 
@@ -65,7 +67,7 @@ class FSMSession(object):
     #     "peak_unfollows": (50, 200),
     # }
 
-    def __init__(self, session: AppiumWebDriver, settings: Settings):
+    def __init__(self, session: AppiumWebDriver):
         """
         Initialization of the FSM with what we want to do
 
@@ -83,7 +85,6 @@ class FSMSession(object):
                                initial='idle')
 
         self.session = session
-        self.settings = settings
         # Keep a stack of previous states we can go back to with the back button
         self.stack_searchpage = {}
         self.stack_homepage = {}
@@ -95,18 +96,12 @@ class FSMSession(object):
         self.commented = 0
         self.watched = 0
 
-    def go_homepage(self):
-        """
-
-        :return:
-        """
-        self.session.go_home()
-
     def on_enter_homepage(self):
         """
 
         :return:
         """
+        self.session.go_home()
 
     def on_exit_homepage(self):
         """
@@ -114,13 +109,63 @@ class FSMSession(object):
         :return:
         """
 
-    def go_searchpage(self):
+    def on_enter_searchpage(self):
         """
-        Take what we have into the actions_config and search for it so we can like or follow
+        Arrive on the searchpage and search for a user, hashtag, location etc, defined in settings
         :return:
         """
+        # check and randomly take one from users, hashtags, locations
 
-    def do_work(self):
+        possible_types = []
+
+        # make sure we are at the top level
+        while len(self.stack_searchpage) > 0:
+            eval(self.stack_searchpage.pop())
+
+        if len(Settings.get_locations()) > 0:
+            possible_types.append('locations')
+
+        if len(Settings.get_hashtags()) > 0:
+            possible_types.append('hashtags')
+
+        if len(Settings.get_users()) >0:
+            possible_types.append('users')
+
+        search_type = random.choice(possible_types)
+        item = random.choice(eval('Settings.get_'+search_type+'()'))
+
+        res = self.session.go_search(item, search_type)
+        self.stack_searchpage.add("self.session.go_back()")
+        if res.status:
+            self.stack_searchpage.add("self.session.go_back()")
+            if search_type == "accounts":
+                self.go_user()
+            else:
+                self.do_feed()
+        else:
+            # item was not found
+            # we go back to idle?
+            self.go_idle()
+
+    def on_enter_user(self):
+        user = self.session.get_userdata()
+
+        # dump the data into a DB
+
+        # check if the user is inside the criteria we want to follow
+
+        # follow and/or interact
+        if Settings.get_action_config()['follow']:
+            if random.randint(0, 100) <= Settings.get_action_config()['follow_percent']:
+                self.go_follow()
+        
+        if Settings.get_action_config()['user_interact']:
+            if random.randint(0, 100) <= Settings.get_action_config()['user_interact_percent']:
+                self.session.go_feed()
+                self.go_feed()
+
+
+    def on_enter_idle(self):
         """
         execute the actions needed to go to the next actions
         ideally we randomize the states we want to go in and we trigger them

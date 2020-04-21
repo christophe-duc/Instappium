@@ -3,6 +3,32 @@ Global variables
 
 By design, import no any other local module inside this file.
 Vice verse, it'd produce circular dependent imports.
+
+action_config params:
+  - comment: True or False if we comment on posts
+  - comment_percentage: the % amount we comment on each post
+  - follow_times: the number of times we follow a user
+  - follow: True or False if we follow
+  - follow_percentage: the % amount we follow
+  - like: True or False if we like posts
+  - like_percentage: the % amount we like
+  - like_dont: list of words if matches we don't like
+  - story: True or False if we watch stories
+  - story_percentage: the % amount we watch stories
+  - mandatory_language: post need to be in certain char set
+  - user_interact_amount: the amount we interact with user
+  - user_interact_random: the posts we select are random or not
+  - user_interact_percentage: the % amount we interact
+  - user_interact_media: the type of media we interact with
+
+- hashtags: list of hashtags to look at
+- users: list of users to look at
+- comments: the list of possible comment
+- locations: the lost of location to look at
+- ignore_users: the one we don't interact with
+- mandatory_words: we like if they are present
+- ignore_if_contains: we don't like if contains
+- dont_unfollow: the one we don't unfollow
 """
 
 # objects import
@@ -24,6 +50,9 @@ class Settings:
     # store user-defined delay time to sleep after doing actions
     action_delays = {}
     action_config = {}
+    hashtags = []
+    users = []
+    locations = []
     comments = []
     ignore_users = []
     mandatory_words = []
@@ -57,6 +86,34 @@ class Settings:
         cls.action_delays["safety_match"] = safety_match
 
     @classmethod
+    def get_action_delays(cls):
+        return cls.action_delays
+
+    @classmethod
+    def set_hashtags(cls, hashtags: []):
+        cls.hashtags = hashtags
+
+    @classmethod
+    def get_hashtags(cls):
+        return cls.hashtags
+
+    @classmethod
+    def set_users(cls, users: []):
+        cls.users = users
+
+    @classmethod
+    def get_users(cls):
+        return cls.users
+
+    @classmethod
+    def set_locations(cls, locations: []):
+        cls.locations = locations
+
+    @classmethod
+    def get_locations(cls):
+        return cls.locations
+
+    @classmethod
     def set_do_comment(cls, enabled: bool = False, percentage: int = 0):
         """
         Defines if images should be commented or not.
@@ -67,6 +124,10 @@ class Settings:
         cls.action_config['comment_percentage'] = percentage
 
     @classmethod
+    def get_action_config(cls):
+        return cls.action_config
+
+    @classmethod
     def set_comments(cls, comments: list):
         """
         Sets the possible posted comments.
@@ -74,6 +135,10 @@ class Settings:
         """
 
         cls.comments = comments
+
+    @classmethod
+    def get_comments(cls):
+        return cls.comments
 
     @classmethod
     def set_do_follow(cls, enabled: bool = False, percentage: int = 0, times: int = 1):
@@ -109,7 +174,7 @@ class Settings:
          words is in the description, the image won't be liked but user
          still might be unfollowed"""
 
-        cls.action_config['like_donot'] = tags
+        cls.action_config['like_dont'] = tags
 
     @classmethod
     def set_mandatory_words(cls, tags: list):
@@ -117,6 +182,10 @@ class Settings:
          hashtags is in the description, the image will be liked"""
 
         cls.mandatory_words = tags
+
+    @classmethod
+    def get_mandatory_words(cls):
+        return cls.mandatory_words
 
     @classmethod
     def set_user_interact(
@@ -141,6 +210,10 @@ class Settings:
         cls.ignore_users = users
 
     @classmethod
+    def get_ignore_users(cls):
+        return cls.ignore_users
+
+    @classmethod
     def set_ignore_if_contains(cls, words: list):
         """Ignores the don't likes if the description contains
         one of the given words"""
@@ -148,10 +221,17 @@ class Settings:
         cls.ignore_if_contains = words
 
     @classmethod
+    def get_ignore_if_contains(cls):
+        return cls.ignore_if_contains
+
+    @classmethod
     def set_dont_include(cls, friends: list = None):
         """Defines which accounts should not be unfollowed"""
-
         cls.dont_unfollow = friends
+
+    @classmethod
+    def get_dont_unfollow(cls):
+        return cls.dont_unfollow
 
     # @classmethod
     # def set_switch_language(cls, option: bool = True):
@@ -190,5 +270,5 @@ class Settings:
             if ch_set_name not in char_set:
                 char_set.append(ch_set_name)
 
-        cls.mandatory_language = enabled
-        cls.mandatory_character = char_set
+        cls.action_config['mandatory_language'] = enabled
+        cls.action_config['mandatory_character'] = char_set

@@ -8,6 +8,7 @@ from time import sleep
 import random
 
 # class import
+from instappium.common import Logger
 from ..common.xpath import xpath
 from ..common.model.user import User
 from .helper_functions import _cleanup_count
@@ -18,7 +19,7 @@ class AppiumCommonActions(object):
     class for all the common actions (not related to user, comment, post, story)
     """
 
-    def _get_userdata(self):
+    def get_userdata(self):
         """
         extract data from the user profile
         :return: a User object filled with the information we extracted
@@ -123,21 +124,24 @@ class AppiumCommonActions(object):
             if f_item.text.lower().replace('#', '') == item:
                 f_item.click()
                 sleep(5)
-                # get the data we can:
 
-                if search_type == "accounts":
-                    user: User = self._get_userdata()
+                if search_type != 'accounts':
+                    # click on recent posts
+                    # click on first post to be in feed mode
+                    elem = self.driver.find_elements_by_id(xpath.read_xpath("search", "recent"))
+                    elem[0].click()
+                    sleep(5)
 
-                    # when we are done we should go back twice to leave everything clean (the state machine should do it)
+                    #find first post
+                    elem = self.driver.find_elements_by_id(xpath.read_xpath("search", "post_image_list"))
+                    elem[0].click()
+                    sleep(5)
 
-                    return {"status": True, "user": user}
+                return {"status": True}
 
-                else:
-                    # in the case of hashtags and places we get a grid of posts
-
-                    # when we are done we should also clean everything
-                    return {"status": True}
-
+        # we haven't found anything
+        Logger.logerror("no item={} of type={} found".format(item, search_type))
+        return {"status": False}
 
     def go_back(self):
         elem = self.driver.find_elements_by_id(xpath.read_xpath("action_bar", "back"))

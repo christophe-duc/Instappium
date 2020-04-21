@@ -33,8 +33,8 @@ class xpath:
         "accounts_results": "com.instagram.android:id/row_search_user_username",
         "hashtags_results": "com.instagram.android:id/row_hashtag_textview_tag_name",
         "places_results": "com.instagram.android:id/row_place_title",
-        "hashtags_top": "//android.widget.TextView[@text='TOP']",
-        "hashtags_recent": "//android.widget.TextView[@text='RECENT']",
+        "top": "//android.widget.TextView[@text='TOP']",
+        "recent": "//android.widget.TextView[@text='RECENT']",
         "post_imagelist": "com.instagram.android:id/image_button",
         "post_videolist": "com.instagram.android:id/layout_container",
     }
