@@ -1,7 +1,8 @@
 """
 Class to define the specific actions for the User class to work with Appium
 """
-
+from .helper_functions import _cleanup_count
+from ..common import xpath, User, Settings
 
 
 class AppiumUserActions:
@@ -9,103 +10,83 @@ class AppiumUserActions:
     Implementation class for User
     """
 
-    @classmethod
-    def find_and_populate_user(cls, username):
-        if AppiumCommonActions.go_user(username):
-            user = User(username,
-                        cls.get_post_count(),
-                        cls.get_following_count(),
-                        cls.get_follower_count(),
-                        cls.get_full_name(),
-                        cls.get_bio()
-                        )
-        return user
-
-    @classmethod
-    def get_following_count(cls):
-        return cls._cleanup_count(
-            AppiumWebDriver.find_element_by_id(
-                "com.instagram.android:id/row_profile_header_textview_following_count"
-            ).text
-        )
-
-
-    @classmethod
-    def get_follower_count(cls):
-        return cls._cleanup_count(
-            AppiumWebDriver.find_element_by_id(
-                "com.instagram.android:id/row_profile_header_textview_followers_count"
-            ).text
-        )
-
-
-    @classmethod
-    def get_post_count(cls):
-        return cls._cleanup_count(
-            AppiumWebDriver.find_element_by_id(
-                "com.instagram.android:id/row_profile_header_textview_post_count"
-            ).text
-        )
-
-
-    @classmethod
-    def get_full_name(cls):
-        return AppiumWebDriver.find_element_by_id(
-            "com.instagram.android:id/profile_header_full_name"
-        ).text
-
-    @classmethod
-    def get_bio(cls):
+    def get_userdata(self):
         """
+        extract data from the user profile
+        :return: a User object filled with the information we extracted
+        """
+        # we should add a layer in a DB to keep what we have already seen
+        # so it acts as a kind of a cache
+        # we can decide to refresh once in a while
 
-        :param driver:
+        elem = self.driver.find_elements_by_id(xpath.read_xpath("profile", "username"))
+        if len(elem) == 0:
+            elem = self.driver.find_elements_by_id(xpath.read_xpath("profile", "username_back"))
+
+        username = elem[0].text
+        posts = _cleanup_count(self.driver.find_elements_by_id(xpath.read_xpath("profile", "posts"))[0].text)
+        followers = _cleanup_count(self.driver.find_elements_by_id(xpath.read_xpath("profile", "followers"))[0].text)
+        following = _cleanup_count(self.driver.find_elements_by_id(xpath.read_xpath("profile", "following"))[0].text)
+        print("following={}".format(following))
+        full_name = self.driver.find_elements_by_id(xpath.read_xpath("profile", "fullname"))[0].text
+
+        elem = self.driver.find_elements_by_id(xpath.read_xpath("profile", "bio"))
+        if len(elem) != 0:
+            bio = elem[0].text
+        else:
+            bio = ''
+
+        elem = self.driver.find_elements_by_id(xpath.read_xpath("profile", "category"))
+        if len(elem) != 0:
+            category = elem[0].text
+        else:
+            category = ''
+
+        return User(username=username,
+                    post_count=posts,
+                    follower_count=followers,
+                    following_count=following,
+                    full_name=full_name,
+                    bio=bio,
+                    category=category,
+                    )
+
+    def follow_user(self):
+        """
+        Follow a user
         :return:
         """
-        return AppiumWebDriver.find_element_by_id(
-            "com.instagram.android:id/profile_header_bio_text"
-        ).text
+        elem = self.driver.find_elements_by_xpath(xpath.read_xpath('profile', 'following_button'))
+        elem[0].click()
 
-    @classmethod
-    def get_posts_likers(cls, username, post_grab_amount, likers_per_post_amount, randomize):
-        """"
+        # we should check here that we don't have a block before returning
+        # if look for block, then.... return {'status': False}
+        Settings.action_delay('follow')
 
-        :param username: the username to find and load
-        :param post_grab_amount amount of posts to grab
-        :param likers_per_post_amount amount of likers per post to grab
-        :param randomize: if true takes randomly, otherwise return the post_grab_amount latest post
-        :return: posts
+        return {'status': True}
+
+    def unfollow_user(self):
         """
+        Unfollow a user
+        :return:
+        """
+        elem = self.driver.find_elements_by_xpath(xpath.read_xpath('profile', 'unfollowing_button'))
+        elem[0].click()
 
-        users = []
-        todo = post_grab_amount
-        if AppiumCommonActions.go_user(username):
-            AppiumCommonActions.swipe(1200)
+        # we should check here that we don't have a block before returning
+        # if look for block, then.... return {'status': False}
+        Settings.action_delay('unfollow')
 
-            if randomize is False:
-                # then we should just take the first posts
-                while todo > 0:
-                    elems=AppiumWebDriver.find_elements_by_xpath("")
+        return {'status': True}
 
-                    if len(elems) > post_grab_amount:
-                        elems = elems[:post_grab_amount]
-
-                    for elem in elems:
-                        # go into the post
-                        elem.click()
-                        users.add(AppiumPostActions.get_likers(likers_per_post_amount))
-
-                    todo -= len(elems)
-                    AppiumCommonActions.swipe(200)
-
-
-            else:
-                # TODO: find a nice way to randomly select posts
-                Logger.error("not implemented yet")
-
-            return users
-
+    def is_followed(self):
+        """
+        respond true or false if the user is already followed
+        :return:
+        """
+        elem = self.driver.find_elements_by_xpath(xpath.read_xpath('profile', 'following_button'))
+        if len(elem) > 0:
+            return True
         else:
-            Logger.error("User {} does not exist".format(username))
-
-        return users
+            return False
 

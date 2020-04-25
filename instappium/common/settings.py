@@ -21,6 +21,16 @@ action_config params:
   - user_interact_percentage: the % amount we interact
   - user_interact_media: the type of media we interact with
 
+action_delays params: how much to wait in between each actions
+  - enabled: True or False if we do actions delays
+  - like: amount of time after a like
+  - comment: amount of time after a comment
+  - follow: amount of time after a follow
+  - unfollow: amount of time after a unfollow
+  - story: amount of time after each reel
+  - randomize: True or False if we randomize actions delays
+  - random_range: [ % min, % max] to randomize in between
+
 - hashtags: list of hashtags to look at
 - users: list of users to look at
 - comments: the list of possible comment
@@ -29,9 +39,12 @@ action_config params:
 - mandatory_words: we like if they are present
 - ignore_if_contains: we don't like if contains
 - dont_unfollow: the one we don't unfollow
+
 """
 
 # objects import
+import random
+
 from instappium.common import Logger
 
 class Settings:
@@ -48,6 +61,7 @@ class Settings:
     QS_config = {}
 
     # store user-defined delay time to sleep after doing actions
+    # set defaults for all variables
     action_delays = {}
     action_config = {}
     hashtags = []
@@ -88,6 +102,31 @@ class Settings:
     @classmethod
     def get_action_delays(cls):
         return cls.action_delays
+
+    @classmethod
+    def set_action_delays(cls,
+                          enabled: bool = False,
+                          like: int = 2,
+                          comment: int = 2,
+                          follow: int = 2,
+                          unfollow: int = 2,
+                          story: int = 2,
+                          random_range: []=[100,100]):
+        cls.action_delays['enabled'] = enabled
+        cls.action_delays['like'] = like
+        cls.action_delays['comment'] = comment
+        cls.action_delays['follow'] = follow
+        cls.action_delays['unfollow'] = unfollow
+        cls.action_delays['story'] = story
+        cls.action_delays['random_range'] = random_range
+
+    @classmethod
+    def action_delay(cls, action: str):
+        if not cls.action_delays['enabled']:
+            return 0
+        else:
+            return random.uniform(cls.action_delays[action] * cls.action_delays['random_range'][0] / 100,
+                                  cls.action_delays[action] * cls.action_delays['random_range'][1] / 100)
 
     @classmethod
     def set_hashtags(cls, hashtags: []):
@@ -272,3 +311,5 @@ class Settings:
 
         cls.action_config['mandatory_language'] = enabled
         cls.action_config['mandatory_character'] = char_set
+
+

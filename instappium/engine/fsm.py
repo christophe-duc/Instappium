@@ -6,6 +6,7 @@ from transitions import Machine
 import random
 
 # Class import
+from instappium.common import Logger
 from ..common import Settings
 from ..appium_webdriver import AppiumWebDriver
 
@@ -25,7 +26,7 @@ class FSMSession(object):
     # all_possible_states
     states = [
         'homepage',
-        'searchpage', 'searchpage_user'
+        'searchpage', 'user'
         'activitypage',
         'profilepage',
         'commentpage',
@@ -38,14 +39,14 @@ class FSMSession(object):
     transitions = [
         {'trigger': 'go_homepage', 'source': '*', 'dest': 'homepage'},
         {'trigger': 'go_searchpage', 'source': '*', 'dest': 'searchpage'},
-        {'trigger': 'go_searchpage_user', 'source': 'searchpage', 'dest': 'user'},
+        {'trigger': 'go_user', 'source': 'searchpage', 'dest': 'user'},
         {'trigger': 'do_feed', 'source': 'searchpage', 'dest': 'feed'},
         # {'trigger': 'go_camera', 'source': '*', 'dest': 'camera_page'},
         {'trigger': 'go_activitypage', 'source': '*', 'dest': 'activitypage'},
         {'trigger': 'go_profilepage', 'source': '*', 'dest': 'profilepage'},
         {'trigger': 'go_storypage', 'source': ['homepage', 'profilepage'], 'dest': 'storypage'},
         {'trigger': 'go_idle', 'source': '*', 'dest': 'idle'},
-        {'trigger': 'do_sleep', 'source': 'idle', 'dest': 'idle'}
+        {'trigger': 'do_sleep', 'source': 'idle', 'dest': 'idle'},
     ]
 
     # expected actions_config parameters
@@ -128,7 +129,7 @@ class FSMSession(object):
         if len(Settings.get_hashtags()) > 0:
             possible_types.append('hashtags')
 
-        if len(Settings.get_users()) >0:
+        if len(Settings.get_users()) > 0:
             possible_types.append('users')
 
         search_type = random.choice(possible_types)
@@ -141,7 +142,7 @@ class FSMSession(object):
             if search_type == "accounts":
                 self.go_user()
             else:
-                self.do_feed()
+                self.go_feed()
         else:
             # item was not found
             # we go back to idle?
@@ -152,18 +153,34 @@ class FSMSession(object):
 
         # dump the data into a DB
 
-        # check if the user is inside the criteria we want to follow
+        # check if the user is inside the criteria we want to follow/interact
 
-        # follow and/or interact
-        if Settings.get_action_config()['follow']:
-            if random.randint(0, 100) <= Settings.get_action_config()['follow_percent']:
-                self.go_follow()
+        if (user.follower_count > Settings.get_action_config()['follower_min_count']
+            and user.following_count < Settings.get_action_config()['following_max_count']
+                and user.post_count > Settings.get_action_config()['min_post_count']):
 
-        if Settings.get_action_config()['user_interact']:
-            if random.randint(0, 100) <= Settings.get_action_config()['user_interact_percent']:
-                self.session.go_feed()
-                self.go_feed()
+            # follow and/or interact
+            if not self.session.is_followed() and Settings.get_action_config()['follow']:
+                if random.randint(0, 100) <= Settings.get_action_config()['follow_percent']:
+                    if self.session.follow_user():
+                        Logger.loginfo('User {} followed successfully'.format(user.username))
+                        self.followed += 1
+                    else:
+                        Logger.logerror('User {} was not followed'.format(user.username))
 
+            if self.session.is_followed() and Settings.get_action_config()['unfollow']:
+                if self.session.unfollow_user():
+                    Logger.loginfo('User {} was unfollowed successfully'.format(user.username))
+                    self.unfollowed += 1
+                else:
+                    Logger.logerror('User {} was not unfollowed'.format(user.username))
+
+            if Settings.get_action_config()['user_interact']:
+                if random.randint(0, 100) <= Settings.get_action_config()['user_interact_percent']:
+                    # let's put ourselves in the feed mode by clicking a post
+                    self.session.go_feed()
+                    # transition to the feed state
+                    self.go_feed()
 
     def on_enter_idle(self):
         """
@@ -177,24 +194,6 @@ class FSMSession(object):
         self.machine.trigger(next_transition)
 
         # we arrive at a permanent state of the FSM, we stay idle forever
-
-    def on_exit_followed(self):
-        """
-        we had a successfull follow
-        :return:
-        """
-        # update the fsm info
-        # but not really needed as each function will update everything it need
-        # into live session
-        self.followed += 1
-
-
-    def on_exit_unfollowed(self):
-        """
-        we had an successfull unfollow
-        :return:
-        """
-        self.unfollowed += 1
 
 
 
