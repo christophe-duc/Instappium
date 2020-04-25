@@ -81,7 +81,7 @@ class AppiumCommonActions(object):
         profile = self.driver.find_elements_by_xpath(xpath.read_xpath("action_bar", "profile"))
         profile[0].click()
 
-        user: User = self._get_userdata()
+        user: User = self.get_userdata()
 
         return {"status": True, "user": user}
 
@@ -104,8 +104,7 @@ class AppiumCommonActions(object):
 
         elem = self.driver.find_elements_by_id(xpath.read_xpath("search", "search_text"))
         # we might want to open the keyboard and do a sendkey on that
-        # .getkeyboard().send_keys
-        # self.driver.get_keyboard().send_keys(item)
+        # self.simulate_typing(elem[0], item)
         elem[0].send_keys(item)
         sleep(3)
         # self.driver.hide_keyboard()
@@ -162,6 +161,11 @@ class AppiumCommonActions(object):
         thread = threading.Thread(target=self._idle, args=())
         thread.daemon = True
         thread.start()
+
+    def simulate_typing(self, elem: object, item: str):
+        """
+        a function to try to do a better job than send_keys
+        """
 
     def _idle(self):
         while True:

@@ -158,7 +158,7 @@ class FSMSession(object):
         if Settings.get_action_config()['follow']:
             if random.randint(0, 100) <= Settings.get_action_config()['follow_percent']:
                 self.go_follow()
-        
+
         if Settings.get_action_config()['user_interact']:
             if random.randint(0, 100) <= Settings.get_action_config()['user_interact_percent']:
                 self.session.go_feed()
