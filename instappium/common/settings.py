@@ -31,6 +31,21 @@ action_delays params: how much to wait in between each actions
   - randomize: True or False if we randomize actions delays
   - random_range: [ % min, % max] to randomize in between
 
+quota_supervisor params: how much actions we do in an hour/per day
+  - enabled: True or False if we do quota supervision
+  - peak_likes: max amount per hour and per 24 hours
+  - peak_follows: max amount per hour and per 24 hours
+  - peak_unfollows: max amount per hour and per 24 hours
+  - peak_server_calls: max amount per hout and per 24 hours
+
+relationship_bounds:
+    - enabled: True or False if we check the user
+    - potency ratio: The ratio between followers/following
+    - max_followers: the amount of followers the user should not be above
+    - min_followers: the min amount of followers the user should have
+    - min_following: the min amount of followings the user should have
+    - min_posts: the min amount of posts the user should have
+
 - hashtags: list of hashtags to look at
 - users: list of users to look at
 - comments: the list of possible comment
@@ -57,13 +72,36 @@ class Settings:
     # set current profile credentials for DB operations
     profile = {"id": None, "name": None}
 
-    # hold live Quota Supervisor configuration for global usage
-    QS_config = {}
-
     # store user-defined delay time to sleep after doing actions
     # set defaults for all variables
-    action_delays = {}
+    action_delays = {
+        "enabled": True,
+        "like": 150,
+        "follow": 150,
+        "unfollow": 150,
+        "story": 150,
+        "randomize": True,
+        "random_range": [70, 140],
+        "safety_match": False,
+    }
+
     action_config = {}
+    quota_supervisor = {
+        "enabled": True,
+        "peak_likes": [40, 300],
+        "peak_follows": [25, 150],
+        "peak_unfollows": [60, 200],
+        "peak_server_calls": [300, 2500],
+    }
+
+    relationship_bounds = {
+        "enabled": True,
+        "potency_ratio": None,
+        "max_followers": 3000,
+        "min_followers": 25,
+        "min_following": 25,
+        "min_posts": 10,
+    }
     hashtags = []
     users = []
     locations = []
@@ -72,6 +110,36 @@ class Settings:
     mandatory_words = []
     ignore_if_contains = []
     dont_unfollow = []
+
+    @classmethod
+    def set_quota_supervisor(cls,
+                             enabled: bool = False,
+                             peak_likes: int = None,
+                             peak_follows: int = None,
+                             peak_unfollows: int = None,
+                             peak_server_calls: [] = None,
+                             ):
+        cls.quota_supervisor["enabled"] = enabled
+        cls.quota_supervisor["peak_likes"] = peak_likes
+        cls.quota_supervisor["peak_follows"] = peak_follows
+        cls.quota_supervisor["peak_unfollows"] = peak_unfollows
+        cls.quota_supervisor["peak_server_calls"] = peak_server_calls
+
+    @classmethod
+    def set_relationship_bounds(cls,
+                                enabled: bool = False,
+                                potency_ratio: float = None,
+                                max_followers: int = None,
+                                min_followers: int = None,
+                                min_following: int = None,
+                                min_posts: int = None,
+                                ):
+        cls.relationship_bounds["enabled"] = enabled
+        cls.relationship_bounds["potency_ratio"] = potency_ratio
+        cls.relationship_bounds["max_followers"] = max_followers
+        cls.relationship_bounds["min_followers"] = min_followers
+        cls.relationship_bounds["min_following"] = min_following
+        cls.relationship_bounds["min_posts"] = min_posts
 
     @classmethod
     def set_action_delays(
@@ -83,8 +151,7 @@ class Settings:
         unfollow: int = None,
         story: int = None,
         randomize: bool = False,
-        random_range_from: int = None,
-        random_range_to: int = None,
+        random_range: [] = None,
         safety_match: bool = True,
     ):
         """ Set custom sleep delay after actions """
@@ -95,30 +162,12 @@ class Settings:
         cls.action_delays["unfollow"] = unfollow
         cls.action_delays["story"] = story
         cls.action_delays["randomize"] = randomize
-        cls.action_delays["random_range_from"] = random_range_from
-        cls.action_delays["random_range_to"] = random_range_to
+        cls.action_delays["random_range"] = random_range
         cls.action_delays["safety_match"] = safety_match
 
     @classmethod
     def get_action_delays(cls):
         return cls.action_delays
-
-    @classmethod
-    def set_action_delays(cls,
-                          enabled: bool = False,
-                          like: int = 2,
-                          comment: int = 2,
-                          follow: int = 2,
-                          unfollow: int = 2,
-                          story: int = 2,
-                          random_range: []=[100,100]):
-        cls.action_delays['enabled'] = enabled
-        cls.action_delays['like'] = like
-        cls.action_delays['comment'] = comment
-        cls.action_delays['follow'] = follow
-        cls.action_delays['unfollow'] = unfollow
-        cls.action_delays['story'] = story
-        cls.action_delays['random_range'] = random_range
 
     @classmethod
     def action_delay(cls, action: str):

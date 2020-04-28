@@ -182,6 +182,12 @@ class FSMSession(object):
                     # transition to the feed state
                     self.go_feed()
 
+    def on_enter_feed(self):
+        """
+        execute actions on a feed: browse through it, like, comment, follow
+        :return:
+        """
+
     def on_enter_idle(self):
         """
         execute the actions needed to go to the next actions
