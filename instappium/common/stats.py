@@ -2,8 +2,9 @@
 Where we keep all the stats of a session
 """
 
-#libraries import
+# libraries import
 import time
+
 
 class Stats(object):
     """
@@ -28,7 +29,6 @@ class Stats(object):
         self.already_Visited = 0
         self.stories_watched = 0
         self.reels_watched = 0
-
 
     def live_report(self):
         """

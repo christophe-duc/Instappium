@@ -25,28 +25,32 @@ class FSMSession(object):
 
     # all_possible_states
     states = [
-        'homepage',
-        'searchpage', 'user'
-        'activitypage',
-        'profilepage',
-        'commentpage',
-        'storypage',
-        'feed',
-        'idle',
+        "homepage",
+        "searchpage",
+        "user" "activitypage",
+        "profilepage",
+        "commentpage",
+        "storypage",
+        "feed",
+        "idle",
     ]
 
     # all possible transitions
     transitions = [
-        {'trigger': 'go_homepage', 'source': '*', 'dest': 'homepage'},
-        {'trigger': 'go_searchpage', 'source': '*', 'dest': 'searchpage'},
-        {'trigger': 'go_user', 'source': 'searchpage', 'dest': 'user'},
-        {'trigger': 'do_feed', 'source': 'searchpage', 'dest': 'feed'},
+        {"trigger": "go_homepage", "source": "*", "dest": "homepage"},
+        {"trigger": "go_searchpage", "source": "*", "dest": "searchpage"},
+        {"trigger": "go_user", "source": "searchpage", "dest": "user"},
+        {"trigger": "do_feed", "source": "searchpage", "dest": "feed"},
         # {'trigger': 'go_camera', 'source': '*', 'dest': 'camera_page'},
-        {'trigger': 'go_activitypage', 'source': '*', 'dest': 'activitypage'},
-        {'trigger': 'go_profilepage', 'source': '*', 'dest': 'profilepage'},
-        {'trigger': 'go_storypage', 'source': ['homepage', 'profilepage'], 'dest': 'storypage'},
-        {'trigger': 'go_idle', 'source': '*', 'dest': 'idle'},
-        {'trigger': 'do_sleep', 'source': 'idle', 'dest': 'idle'},
+        {"trigger": "go_activitypage", "source": "*", "dest": "activitypage"},
+        {"trigger": "go_profilepage", "source": "*", "dest": "profilepage"},
+        {
+            "trigger": "go_storypage",
+            "source": ["homepage", "profilepage"],
+            "dest": "storypage",
+        },
+        {"trigger": "go_idle", "source": "*", "dest": "idle"},
+        {"trigger": "do_sleep", "source": "idle", "dest": "idle"},
     ]
 
     # expected actions_config parameters
@@ -60,7 +64,7 @@ class FSMSession(object):
     #   'story_reactions': ['love','applause', ...]
     # }
 
-    #currently safe default numbers
+    # currently safe default numbers
     # quota = {
     #     "peak_likes": (40, 400),
     #     "peak_comments":  (20, 200),
@@ -80,10 +84,9 @@ class FSMSession(object):
         # no need to have followed states if following is not configured
 
         print("auto-configure states and transitions here!")
-        self.machine = Machine(model=self,
-                               states=self.states,
-                               transitions=self.transitions,
-                               initial='idle')
+        self.machine = Machine(
+            model=self, states=self.states, transitions=self.transitions, initial="idle"
+        )
 
         self.session = session
         # Keep a stack of previous states we can go back to with the back button
@@ -124,16 +127,16 @@ class FSMSession(object):
             eval(self.stack_searchpage.pop())
 
         if len(Settings.get_locations()) > 0:
-            possible_types.append('locations')
+            possible_types.append("locations")
 
         if len(Settings.get_hashtags()) > 0:
-            possible_types.append('hashtags')
+            possible_types.append("hashtags")
 
         if len(Settings.get_users()) > 0:
-            possible_types.append('users')
+            possible_types.append("users")
 
         search_type = random.choice(possible_types)
-        item = random.choice(eval('Settings.get_'+search_type+'()'))
+        item = random.choice(eval("Settings.get_" + search_type + "()"))
 
         res = self.session.go_search(item, search_type)
         self.stack_searchpage.add("self.session.go_back()")
@@ -155,28 +158,46 @@ class FSMSession(object):
 
         # check if the user is inside the criteria we want to follow/interact
 
-        if (user.follower_count > Settings.get_action_config()['follower_min_count']
-            and user.following_count < Settings.get_action_config()['following_max_count']
-                and user.post_count > Settings.get_action_config()['min_post_count']):
+        if (
+            user.follower_count > Settings.get_action_config()["follower_min_count"]
+            and user.following_count
+            < Settings.get_action_config()["following_max_count"]
+            and user.post_count > Settings.get_action_config()["min_post_count"]
+        ):
 
             # follow and/or interact
-            if not self.session.is_followed() and Settings.get_action_config()['follow']:
-                if random.randint(0, 100) <= Settings.get_action_config()['follow_percent']:
+            if (
+                not self.session.is_followed()
+                and Settings.get_action_config()["follow"]
+            ):
+                if (
+                    random.randint(0, 100)
+                    <= Settings.get_action_config()["follow_percent"]
+                ):
                     if self.session.follow_user():
-                        Logger.loginfo('User {} followed successfully'.format(user.username))
+                        Logger.loginfo(
+                            "User {} followed successfully".format(user.username)
+                        )
                         self.followed += 1
                     else:
-                        Logger.logerror('User {} was not followed'.format(user.username))
+                        Logger.logerror(
+                            "User {} was not followed".format(user.username)
+                        )
 
-            if self.session.is_followed() and Settings.get_action_config()['unfollow']:
+            if self.session.is_followed() and Settings.get_action_config()["unfollow"]:
                 if self.session.unfollow_user():
-                    Logger.loginfo('User {} was unfollowed successfully'.format(user.username))
+                    Logger.loginfo(
+                        "User {} was unfollowed successfully".format(user.username)
+                    )
                     self.unfollowed += 1
                 else:
-                    Logger.logerror('User {} was not unfollowed'.format(user.username))
+                    Logger.logerror("User {} was not unfollowed".format(user.username))
 
-            if Settings.get_action_config()['user_interact']:
-                if random.randint(0, 100) <= Settings.get_action_config()['user_interact_percent']:
+            if Settings.get_action_config()["user_interact"]:
+                if (
+                    random.randint(0, 100)
+                    <= Settings.get_action_config()["user_interact_percent"]
+                ):
                     # let's put ourselves in the feed mode by clicking a post
                     self.session.go_feed()
                     # transition to the feed state
@@ -196,12 +217,7 @@ class FSMSession(object):
         """
         # here we should have in the state machine only the states we can do
         # because we have data, otherwise the only state that it can go is in idle
-        next_transition = "go_"+random.sample(self.states,1)
+        next_transition = "go_" + random.sample(self.states, 1)
         self.machine.trigger(next_transition)
 
         # we arrive at a permanent state of the FSM, we stay idle forever
-
-
-
-
-

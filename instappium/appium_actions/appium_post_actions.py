@@ -2,8 +2,8 @@
 Class to define the specific actions for the AppiumPost class to work with Appium
 """
 
-class AppiumPostActions():
 
+class AppiumPostActions:
     def do_like(self):
         """"
         to implement the action of liking a post
@@ -28,8 +28,7 @@ class AppiumPostActions():
         function that click on the username of the post and return a User
         :returns User()
         """
-        #TODO: implement
-
+        # TODO: implement
 
         # return User()
 

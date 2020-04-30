@@ -1,8 +1,9 @@
 """
 Class to define the specific actions for the Comment class to work with Appium
 """
-class AppiumCommentActions():
 
+
+class AppiumCommentActions:
     def like(self):
         """
         Implement function to like a comment

@@ -4,8 +4,8 @@ from instapy.common.model.user import User
 import argparse
 
 # from instapy.drivers.appium_endpoints import user_actions
-parser = argparse.ArgumentParser(description='Code for testing appium features.')
-parser.add_argument('--username', help='instagram username for login', default='abc')
+parser = argparse.ArgumentParser(description="Code for testing appium features.")
+parser.add_argument("--username", help="instagram username for login", default="abc")
 args = parser.parse_args()
 insta_username = args.username
 

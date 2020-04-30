@@ -4,13 +4,14 @@ Post model for interactions posts attributes and perform action on posts
 """
 from enum import Enum
 
-class Post():
+
+class Post:
     class Types(Enum):
         PHOTO = 0
         CAROUSEL = 1
         VIDEO = 2
 
-    def __init__(self, like_count = None, comment_count = None):
+    def __init__(self, like_count=None, comment_count=None):
 
         self._like_count = like_count
         self._comment_count = comment_count

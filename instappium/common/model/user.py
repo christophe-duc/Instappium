@@ -4,16 +4,18 @@ it performs no actions; if actions are needed, they will be performed
 through the AppiumUserActions or SeleniumUserActions static class.
 """
 
-class User():
 
-    def __init__(self,username: str,
-                 post_count: int = None,
-                 follower_count: int = None,
-                 following_count: int = None,
-                 full_name: str = None,
-                 bio: str = None,
-                 category: str = None
-                 ):
+class User:
+    def __init__(
+        self,
+        username: str,
+        post_count: int = None,
+        follower_count: int = None,
+        following_count: int = None,
+        full_name: str = None,
+        bio: str = None,
+        category: str = None,
+    ):
         """
         init
         """
@@ -24,7 +26,6 @@ class User():
         self._full_name = full_name
         self._bio = bio
         self._category = category
-
 
     # Used for working with sets
     def __hash__(self):
@@ -40,8 +41,14 @@ class User():
     def __repr__(self):
         return "User information: \n\thash (id): {}, \n\tusername: {}, \n\tpost count: {}, \n\tfollower count: {},\
             \n\tfollowing count: {}, \n\tfull name: {},\n\tbio: {}\n\tcategory: {}".format(
-            hash(self), self.username, self.post_count, self.follower_count,
-            self.following_count, self.full_name, self.bio, self.category
+            hash(self),
+            self.username,
+            self.post_count,
+            self.follower_count,
+            self.following_count,
+            self.full_name,
+            self.bio,
+            self.category,
         )
 
     def __str__(self):

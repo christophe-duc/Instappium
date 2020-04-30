@@ -2,7 +2,7 @@
 Class to define everything needed to work with Appium
 """
 
-#class import
+# class import
 from .common import Logger
 from .appium_actions import AppiumCommonActions
 from .appium_actions import AppiumPostActions
@@ -15,14 +15,12 @@ from ppadb.client import Client as AdbClient
 from time import sleep
 
 
-class AppiumWebDriver(AppiumCommonActions,
-                    AppiumCommentActions,
-                    AppiumUserActions,
-                    AppiumPostActions):
+class AppiumWebDriver(
+    AppiumCommonActions, AppiumCommentActions, AppiumUserActions, AppiumPostActions
+):
     """
     Appium WebDriver class
     """
-
 
     def __init__(
         self,
@@ -76,7 +74,9 @@ class AppiumWebDriver(AppiumCommonActions,
                 sleep(10)
             except:
                 # self.logger.error("Could not create webdriver, is Appium running?")
-                Logger.logerror("Could not create webdriver; please make sure Appium is running")
+                Logger.logerror(
+                    "Could not create webdriver; please make sure Appium is running"
+                )
                 quit()  # TODO: nicer way of exiting
 
         else:
@@ -109,7 +109,6 @@ class AppiumWebDriver(AppiumCommonActions,
         """
         return self._web_driver_instance
 
-
     def find_elements_by_xpath(self, xpath: str = ""):
         """
         wrapper for find_element by_xpath
@@ -132,15 +131,18 @@ class AppiumWebDriver(AppiumCommonActions,
         :param uiautomator:
         :return:
         """
-        return self._web_driver_instance.find_element_by_android_uiautomator(uiautomator)
+        return self._web_driver_instance.find_element_by_android_uiautomator(
+            uiautomator
+        )
 
     def current_activity(self):
         return self._web_driver_instance.current_activity
 
     def refresh_feed(self):
-        self._web_driver_instance.swipe(self.DISPLAYSIZE['width'] / 2,
-                                        self.DISPLAYSIZE['height']/4,
-                                        self.DISPLAYSIZE['width'] / 2,
-                                        self.DISPLAYSIZE['height'] / 2,
-                                        1000)
-
+        self._web_driver_instance.swipe(
+            self.DISPLAYSIZE["width"] / 2,
+            self.DISPLAYSIZE["height"] / 4,
+            self.DISPLAYSIZE["width"] / 2,
+            self.DISPLAYSIZE["height"] / 2,
+            1000,
+        )

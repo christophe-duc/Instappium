@@ -27,8 +27,8 @@ class Logger(object):
 
     """
 
-    username = ''
-    logfolder = ''
+    username = ""
+    logfolder = ""
     show_logs = False
     log_handler = None
     __logfile = None
@@ -158,4 +158,3 @@ class Logger(object):
         log_time = datetime.now().strftime("%Y-%m-%d %H:%M")
 
         return log_time
-

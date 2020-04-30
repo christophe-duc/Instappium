@@ -62,6 +62,7 @@ import random
 
 from instappium.common import Logger
 
+
 class Settings:
     """ Globally accessible settings throughout whole project """
 
@@ -112,13 +113,14 @@ class Settings:
     dont_unfollow = []
 
     @classmethod
-    def set_quota_supervisor(cls,
-                             enabled: bool = False,
-                             peak_likes: int = None,
-                             peak_follows: int = None,
-                             peak_unfollows: int = None,
-                             peak_server_calls: [] = None,
-                             ):
+    def set_quota_supervisor(
+        cls,
+        enabled: bool = False,
+        peak_likes: int = None,
+        peak_follows: int = None,
+        peak_unfollows: int = None,
+        peak_server_calls: [] = None,
+    ):
         cls.quota_supervisor["enabled"] = enabled
         cls.quota_supervisor["peak_likes"] = peak_likes
         cls.quota_supervisor["peak_follows"] = peak_follows
@@ -126,14 +128,15 @@ class Settings:
         cls.quota_supervisor["peak_server_calls"] = peak_server_calls
 
     @classmethod
-    def set_relationship_bounds(cls,
-                                enabled: bool = False,
-                                potency_ratio: float = None,
-                                max_followers: int = None,
-                                min_followers: int = None,
-                                min_following: int = None,
-                                min_posts: int = None,
-                                ):
+    def set_relationship_bounds(
+        cls,
+        enabled: bool = False,
+        potency_ratio: float = None,
+        max_followers: int = None,
+        min_followers: int = None,
+        min_following: int = None,
+        min_posts: int = None,
+    ):
         cls.relationship_bounds["enabled"] = enabled
         cls.relationship_bounds["potency_ratio"] = potency_ratio
         cls.relationship_bounds["max_followers"] = max_followers
@@ -171,11 +174,13 @@ class Settings:
 
     @classmethod
     def action_delay(cls, action: str):
-        if not cls.action_delays['enabled']:
+        if not cls.action_delays["enabled"]:
             return 0
         else:
-            return random.uniform(cls.action_delays[action] * cls.action_delays['random_range'][0] / 100,
-                                  cls.action_delays[action] * cls.action_delays['random_range'][1] / 100)
+            return random.uniform(
+                cls.action_delays[action] * cls.action_delays["random_range"][0] / 100,
+                cls.action_delays[action] * cls.action_delays["random_range"][1] / 100,
+            )
 
     @classmethod
     def set_hashtags(cls, hashtags: []):
@@ -208,8 +213,8 @@ class Settings:
         E.g. percentage=25 means every ~4th picture will be commented.
         """
 
-        cls.action_config['comment'] = enabled
-        cls.action_config['comment_percentage'] = percentage
+        cls.action_config["comment"] = enabled
+        cls.action_config["comment_percentage"] = percentage
 
     @classmethod
     def get_action_config(cls):
@@ -232,15 +237,15 @@ class Settings:
     def set_do_follow(cls, enabled: bool = False, percentage: int = 0, times: int = 1):
         """Defines if the user of the liked image should be followed"""
 
-        cls.action_config['follow_times'] = times
-        cls.action_config['follow'] = enabled
-        cls.action_config['follow_percentage'] = min(percentage, 100)
+        cls.action_config["follow_times"] = times
+        cls.action_config["follow"] = enabled
+        cls.action_config["follow_percentage"] = min(percentage, 100)
 
     @classmethod
     def set_do_like(cls, enabled: bool = False, percentage: int = 0):
 
-        cls.action_config['like'] = enabled
-        cls.action_config['like_percentage'] = min(percentage, 100)
+        cls.action_config["like"] = enabled
+        cls.action_config["like_percentage"] = min(percentage, 100)
 
     @classmethod
     def set_do_story(
@@ -253,8 +258,8 @@ class Settings:
             simulate: if True, we will simulate watching (faster),
                       but nothing will be seen on the browser window
         """
-        cls.action_config['story'] = enabled
-        cls.action_config['story_percentage'] = min(percentage, 100)
+        cls.action_config["story"] = enabled
+        cls.action_config["story_percentage"] = min(percentage, 100)
 
     @classmethod
     def set_dont_like(cls, tags: list):
@@ -262,7 +267,7 @@ class Settings:
          words is in the description, the image won't be liked but user
          still might be unfollowed"""
 
-        cls.action_config['like_dont'] = tags
+        cls.action_config["like_dont"] = tags
 
     @classmethod
     def set_mandatory_words(cls, tags: list):
@@ -285,13 +290,13 @@ class Settings:
     ):
         """Define if posts of given user should be interacted"""
 
-        cls.action_config['user_interact_amount'] = amount
-        cls.action_config['user_interact_random'] = randomize
-        cls.action_config['user_interact_percentage'] = percentage
-        cls.action_config['user_interact_media'] = media
+        cls.action_config["user_interact_amount"] = amount
+        cls.action_config["user_interact_random"] = randomize
+        cls.action_config["user_interact_percentage"] = percentage
+        cls.action_config["user_interact_media"] = media
 
     @classmethod
-    def set_ignore_users(cls, users: list ):
+    def set_ignore_users(cls, users: list):
         """Changes the possible restriction to users, if a user who posts
         is one of these, the image won't be liked"""
 
@@ -358,7 +363,5 @@ class Settings:
             if ch_set_name not in char_set:
                 char_set.append(ch_set_name)
 
-        cls.action_config['mandatory_language'] = enabled
-        cls.action_config['mandatory_character'] = char_set
-
-
+        cls.action_config["mandatory_language"] = enabled
+        cls.action_config["mandatory_character"] = char_set

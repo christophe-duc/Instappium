@@ -50,11 +50,7 @@ setup(
     packages=["instappium"],
     # include_package_data=True,  # <- packs every data file in the package
     package_data={  # we need only the files below:
-        "instappium": [
-	        "common/*",
-            "common/model/*",
-            "engine/*",
-        ]
+        "instappium": ["common/*", "common/model/*", "engine/*"]
     },
     keywords=(
         "instappium python instagram automation \

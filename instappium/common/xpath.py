@@ -4,6 +4,7 @@ class to store a relation between keywords and xpath in the UI
 
 # we have to migrate out of xpath (as it is inefficient and use id
 
+
 class xpath:
 
     __xpath = {}
@@ -22,7 +23,6 @@ class xpath:
         "activity": "//android.widget.FrameLayout[@content-desc='Activity' and @index=3]",
         "profile": "//android.widget.FrameLayout[@content-desc='Profile' and @index=4]",
         "back": "com.instagram.android:id/action_bar_button_back",
-
     }
 
     __xpath["search"] = {
@@ -64,7 +64,7 @@ class xpath:
         "like": "com.instagram.android:id/row_feed_button_like",
         "comment": "com.instagram.android:id/row_feed_button_comment",
         "share": "com.instagram.android:id/row_feed_button_share",
-        "save": "com.instagram.android:id/row_feed_button_save"
+        "save": "com.instagram.android:id/row_feed_button_save",
     }
 
     @classmethod

@@ -3,9 +3,11 @@
 Comment model for interactions comment attributes and perform action on comments
 """
 
-class Comment():
-    def __init__(self, user=None, text=None, timestamp=None, like_count=None, reply_count=None):
 
+class Comment:
+    def __init__(
+        self, user=None, text=None, timestamp=None, like_count=None, reply_count=None
+    ):
 
         self._user = user
         self._text = text
@@ -16,7 +18,7 @@ class Comment():
 
     # Used for working with sets
     def __hash__(self):
-        return hash( self.user + self.text + self.timestamp)
+        return hash(self.user + self.text + self.timestamp)
 
     # Used for working with sets
     def __eq__(self, other):

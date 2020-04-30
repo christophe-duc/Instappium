@@ -6,14 +6,13 @@ specific method are callable by AppiumActions.user.method
 etc...
 """
 
-from .appium_common_actions import  AppiumCommonActions
+from .appium_common_actions import AppiumCommonActions
 from .appium_user_actions import AppiumUserActions
 from .appium_post_actions import AppiumPostActions
 from .appium_comment_actions import AppiumCommentActions
 
 
-class AppiumActions(AppiumCommonActions,
-                    AppiumCommentActions,
-                    AppiumUserActions,
-                    AppiumPostActions):
+class AppiumActions(
+    AppiumCommonActions, AppiumCommentActions, AppiumUserActions, AppiumPostActions
+):
     pass
