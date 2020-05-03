@@ -90,9 +90,9 @@ class FSMSession(object):
 
         self.session = session
         # Keep a stack of previous states we can go back to with the back button
-        self.stack_searchpage = {}
-        self.stack_homepage = {}
-        self.stack_activity = {}
+        self.stack_searchpage = []
+        self.stack_homepage = []
+        self.stack_activity = []
         # session stats
         self.followed = 0
         self.unfollowed = 0
@@ -139,9 +139,9 @@ class FSMSession(object):
         item = random.choice(eval("Settings.get_" + search_type + "()"))
 
         res = self.session.go_search(item, search_type)
-        self.stack_searchpage.add("self.session.go_back()")
+        self.stack_searchpage.append("self.session.go_back()")
         if res.status:
-            self.stack_searchpage.add("self.session.go_back()")
+            self.stack_searchpage.append("self.session.go_back()")
             if search_type == "accounts":
                 self.go_user()
             else:
