@@ -97,7 +97,7 @@ class DatabaseEngine(object):
                 connection.commit()
 
         except Exception as exc:
-            Logger.warning(
+            Logger.logwarning(
                 "Wah! Error occurred while getting a DB for '{}':\n\t{}".format(
                     name, str(exc).encode("utf-8")
                 )
@@ -160,7 +160,7 @@ class DatabaseEngine(object):
                     # reselect the table after adding data to get the proper `id`
                     profile = cls._select_profile_by_username(cursor, name)
         except Exception as exc:
-            Logger.warning(
+            Logger.logwarning(
                 "Heeh! Error occurred while getting a DB profile for '{}':\n\t{}".format(
                     name, str(exc).encode("utf-8")
                 )

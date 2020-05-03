@@ -81,6 +81,7 @@ class Logger(object):
     def logerror(cls, message: str = ""):
         cls.__logfile.error(message)
 
+    @classmethod
     def logwarning(cls, message: str = ""):
         cls.__logfile.warning(message)
 
