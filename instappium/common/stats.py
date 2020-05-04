@@ -5,47 +5,49 @@ Where we keep all the stats of a session
 # libraries import
 import time
 
+from instappium.common.helper_functions import truncate_float
+
 
 class Stats(object):
     """
     handling the stats of an instappium session
     """
 
-    def __init__(self):
-        self.start_time = time.time()
-        self.liked_img = 0
-        self.already_liked = 0
-        self.liked_comments = 0
-        self.commented = 0
-        self.replied_to_comments = 0
-        self.followed = 0
-        self.already_followed = 0
-        self.unfollowed = 0
-        self.followed_by = 0
-        self.following_num = 0
-        self.inap_img = 0
-        self.not_valid_users = 0
-        self.video_played = 0
-        self.already_Visited = 0
-        self.stories_watched = 0
-        self.reels_watched = 0
+    start_time = time.time()
+    liked_img = 0
+    already_liked = 0
+    liked_comments = 0
+    commented = 0
+    replied_to_comments = 0
+    followed = 0
+    already_followed = 0
+    unfollowed = 0
+    followed_by = 0
+    following_num = 0
+    inap_img = 0
+    not_valid_users = 0
+    video_played = 0
+    already_Visited = 0
+    stories_watched = 0
+    reels_watched = 0
 
-    def live_report(self):
+    @classmethod
+    def live_report(cls):
         """
            adapted version of instappium live report function for showing up on a telegram message
            :return:
            """
         stats = [
-            self.liked_img,
-            self.already_liked,
-            self.commented,
-            self.followed,
-            self.already_followed,
-            self.unfollowed,
-            self.stories_watched,
-            self.reels_watched,
-            self.inap_img,
-            self.not_valid_users,
+            cls.liked_img,
+            cls.already_liked,
+            cls.commented,
+            cls.followed,
+            cls.already_followed,
+            cls.unfollowed,
+            cls.stories_watched,
+            cls.reels_watched,
+            cls.inap_img,
+            cls.not_valid_users,
         ]
 
         sessional_run_time = cls._run_time()

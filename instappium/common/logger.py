@@ -2,9 +2,6 @@
 Class to define the Logger
 """
 
-# import helpers
-from .helper_functions import interruption_handler
-
 # import libraries
 from datetime import datetime
 import logging

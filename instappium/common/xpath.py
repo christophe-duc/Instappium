@@ -27,9 +27,12 @@ class xpath:
 
     __xpath["search"] = {
         "search_text": "com.instagram.android:id/action_bar_search_edit_text",
-        "accounts": "//android.widget.TextView[@resource-id='com.instagram.android:id/tab_button_name_text' and @text='ACCOUNTS']",
-        "hashtags": "//android.widget.TextView[@resource-id='com.instagram.android:id/tab_button_name_text' and @text='TAGS']",
-        "places": "//android.widget.TextView[@resource-id='com.instagram.android:id/tab_button_name_text' and @text='PLACES']",
+        "accounts": "//android.widget.TextView[@resource-id='com.instagram.android:id/tab_button_name_text' "
+                    "and @text='ACCOUNTS']",
+        "hashtags": "//android.widget.TextView[@resource-id='com.instagram.android:id/tab_button_name_text' "
+                    "and @text='TAGS']",
+        "places": "//android.widget.TextView[@resource-id='com.instagram.android:id/tab_button_name_text' "
+                  "and @text='PLACES']",
         "accounts_results": "com.instagram.android:id/row_search_user_username",
         "hashtags_results": "com.instagram.android:id/row_hashtag_textview_tag_name",
         "places_results": "com.instagram.android:id/row_place_title",
