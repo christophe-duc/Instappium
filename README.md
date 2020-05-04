@@ -1,3 +1,18 @@
+  <p align="center">
+    <a href="https://github.com/timgrossmann/InstaPy/blob/master/LICENSE">
+      <img src="https://img.shields.io/badge/license-GPLv3-blue.svg" />
+    </a>
+    <a href="https://github.com/appium/appium">
+      <img src="https://img.shields.io/badge/built%20with-Appium-yellow.svg" />
+    </a>
+    <a href="https://www.python.org/">
+    	<img src="https://img.shields.io/badge/built%20with-Python3-red.svg" />
+    </a>
+    <a href="https://travis-ci.org/christophe-duc/Instappium">
+	<img src="https://travis-ci.org/christophe-duc/Instappium.svg?branch=master">
+    </a>
+  </p>
+
 # Welcome to Instappium
 
 This project is highly inspired and takes some of the code back from instapy (https://github.com/timgrossmann/InstaPy)
