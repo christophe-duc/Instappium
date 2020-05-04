@@ -1,74 +1,61 @@
 dist: xenial
 language: python
-python: "3.7"
+python: '3.7'
 cache: pip
-
 branches:
   except:
-    - legacy
-    - experimental
-
+  - legacy
+  - experimental
 install: pip install tox
-
 script: tox
-
 stages:
-    - name: static analysis
-    - name: test
-    - name: pypi-prod
-      if: type = push AND fork = false AND tag =~ ^\d+\.\d+\.\d+
-
+- name: static analysis
+- name: test
+- name: pypi-prod
+  if: type = push AND fork = false AND tag =~ ^\d+\.\d+\.\d+
 jobs:
   fast_finish: true
   include:
-    - stage: static analysis
-      env: TOXENV=black
-      python: "3.7"
-
-    - stage: static analysis
-      env: TOXENV=flake8
-      python: "3.7"
-
-    - stage: test
-      env: TOXENV=py34
-      python: "3.4"
-
-    - stage: test
-      env: TOXENV=py35
-      python: "3.5"
-
-    - stage: test
-      env: TOXENV=py36
-      python: "3.6"
-
-    - stage: test
-      env: TOXENV=py37
-      python: "3.7"
-
-    - stage: test
-      env: TOXENV=py38
-      python: "3.8-dev"
-
-    - stage: test
-      env: TOXENV=py38
-      python: "nightly"
-
-    - stage: pypi-prod
-      install: true
-      script: skip
-      deploy:
-        provider: pypi
-        user: Instappium
-        password:
-          secure: YksWurLkvurfrbSpOkHFTouFg9NCEcl09GikX3v8lk5jXfY8D8TBIQfakck6dYKVFrjaIOxEPm7sqaYm0//oz91NLiSv4iBZL2mLdQ1n8+aQQ9uctoiKMcfBTMp4dDwdCxNqPV0Aco8NbcB6Se0oNd94H54ohA5Al5Z65ivDe3dka+zabeJMa0TO0SXVqY2KmMgFPLScZUqQqKl4HxxgDyWkw9onPz//T9r2u32C7LpP/x8joHQ1jeUlNZZRwkrMaIuOYmmkUZztkj+zBfPpaV4DPPjMAmjo0G9tGmc2pEIE1joUtw0OSpstpvvnchqI6YeMHZ9nITTIEa3fShoAcYmTsiWEeK5XPnmuMt0qdIvflNOi3Ck5vVo1DWzz/S3QyU9YejTZ8TNBOOGLZlrmyDTHpNyTUJB06Euw5Wos8wVxgtIdKLJ/1wvIC+d+n+0wnnhdESEG0lZo1dCbkGHRdJjfYADnu3sUZyDk/3ZrHQBXa/Qw2zB9bT1GLNQNmE32GkRe8Zr6S0H2LrdXggzoBNMZeyJ7qHXwoahsOtO+CeqHmlpaNYD5kstqXLPxIy9ZfOPFa1F2YQ0Kz7Hgdic42DlUcaLf4749EX80668XPAhs3H7LwRhboZuBj6hWgA7I0YQVDRNwJ/nN53fQBWIfoemJwxQ7PqKFiIpW9bbXyPk=
-        distributions: sdist bdist_wheel
-        on:
-          tags: true
-          repo: christophe_duc/Instappium
-          branches:
-            only:
-              - master
-
+  - stage: static analysis
+    env: TOXENV=black
+    python: '3.7'
+  - stage: static analysis
+    env: TOXENV=flake8
+    python: '3.7'
+  - stage: test
+    env: TOXENV=py34
+    python: '3.4'
+  - stage: test
+    env: TOXENV=py35
+    python: '3.5'
+  - stage: test
+    env: TOXENV=py36
+    python: '3.6'
+  - stage: test
+    env: TOXENV=py37
+    python: '3.7'
+  - stage: test
+    env: TOXENV=py38
+    python: 3.8-dev
+  - stage: test
+    env: TOXENV=py38
+    python: nightly
+  - stage: pypi-prod
+    install: true
+    script: skip
+    deploy:
+      provider: pypi
+      user: __token__
+      password:
+        secure: AVVmP7sIc6yFU58KBKkYV28R+uU4HfwAFt6r83WhuLsarsTuDL7kBsGarmqkJZbaABGaYXfr0DM8NX5s8uC6MIXqvAyI2Pt7GHwtQB5doBkTCS8ik65R50Cas0l63jms379FYuVU8DiaRzH2J+enSd2wwBY7mUXpvjL7h5F53EPc4vvK4daieheZLdwp/G8PBahdZ3E+O671KQ2lHaiA0viopxwNqA+18zjstGVdi8gVxw81d58DOLcO1mqc81q2uWo8Vlj/QYtsZRcLXXegA5IcGHyBbCHhhWSsH8f46nkE2gpDPV+FYrSS+2sXtK4SBdxJFhisMcwLfBFb/adrV+ch9tfMuDOwCqc9mCSqq15BMcxRQkMh7UWj2j5hE3yx4hl5MEF7g9oF89ox04ICnu8sH/T7jAbpI8tiI5p70VDqNmqNvZ1wJ1frzu9F2q8cpgpTwjjk1ZyJ3rnxK9RY6GQtCd6FNh7rvT32EwhCZlQRPUE7ZVCuBM6tktFkwm/60kf4YGA1On02ZsJOhkPdbJDzg2fX0ioDWxVrHz50DwEioNYq/UsDHLrapLqLjFMdI0qL/yQEzl5t/JPoDHMV2cTN2k8zUI93F4ePt9+ZaXA+wBJd51KeO9lodfshcM6w9pu41t3VlAdWjcnyPsFP61U5ZyCNza6choki14k3hv4=
+      distributions: sdist bdist_wheel
+      on:
+        tags: true
+        repo: christophe_duc/Instappium
+        branches:
+          only:
+          - master
   allow_failures:
-    - python: "3.8-dev"
-    - python: "nightly"
+  - python: 3.8-dev
+  - python: nightly
+    
