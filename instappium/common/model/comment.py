@@ -6,7 +6,12 @@ Comment model for interactions comment attributes and perform action on comments
 
 class Comment:
     def __init__(
-        self, username=None, text=None, timestamp=None, like_count=None, reply_count=None
+        self,
+        username=None,
+        text=None,
+        timestamp=None,
+        like_count=None,
+        reply_count=None,
     ):
 
         self._username = username
@@ -83,4 +88,3 @@ class Comment:
         """
 
         return self._reply_count
-
