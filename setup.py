@@ -12,7 +12,7 @@ import re
 
 
 summary = "Tool for automated Instagram interactions"
-project_homepage = "https://github.com/christophe-duc/InstAppium"
+project_homepage = "https://github.com/christophe-duc/Instappium"
 here = path.abspath(path.dirname(__file__))
 
 
@@ -49,9 +49,6 @@ setup(
     },
     packages=["instappium"],
     # include_package_data=True,  # <- packs every data file in the package
-    package_data={  # we need only the files below:
-        "instappium": ["common/*", "common/model/*", "engine/*"]
-    },
     keywords=(
         "instappium python instagram automation \
          marketing promotion bot appium"
